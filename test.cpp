@@ -1,17 +1,3 @@
-///////////////////////////////////////////////////////////////
-// moveSphere.cpp
-//
-// This program allows the user to move a sphere to demonstrate
-// distortion at the edges of the viewing frustum.
-//
-// Interaction:
-// Press the arrow keys to move the sphere.
-// Press the space bar to rotate the sphere..
-// Press r to reset.
-//
-// Sumanta Guha.
-///////////////////////////////////////////////////////////////
-
 #include <iostream>
 
 #include <GL/glew.h>
