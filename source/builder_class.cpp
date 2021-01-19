@@ -42,14 +42,82 @@ void BuilderClass::showTrunk() const
 	for (; i <= stage; ++i)
 	{
 		glBegin(GL_LINE_LOOP);
+		glColor3f(0.1 * this->stage, 0.0, 0.0);
 		for (int j = 0; j < 20; ++j)
 		{
-			glColor3f(0.1 * this->stage, 0.0, 0.0);
 			glVertex3f(circle_group[i][j][0], circle_group[i][j][1], circle_group[i][j][2]);
 		}
 		glEnd();
 		glFlush();
 	}
+	for (int k = 0; k < 12; ++k)
+	{
+		glBegin(GL_LINE_LOOP);
+		glColor3f(0.0, 0.0, 0.1 * this->stage);
+		for (int j = 0; j < 20; ++j)
+		{
+			if (k > 11) {
+				continue;
+			}
+			glVertex3f(cap_group[k][j][0], cap_group[k][j][1], cap_group[k][j][2]);
+
+		}
+		glEnd();
+		glFlush();
+	}
+
+}
+
+void BuilderClass::translateCircle(int group)
+{
+	if (group == 1)
+	{
+		for (int i = 0; i < 12; ++i)
+		{
+			for (int j = 0; j < 20; ++j)
+			{
+				cap_group[i][j][2] += 0.1;
+			}
+		}
+	}
+	else if (group == 2) 
+	{
+		for (int i = 0; i < stage; ++i)
+		{
+			for (int j = 0; j < 20; ++j)
+			{
+				circle_group[i][j][2] += 0.1;
+			}
+		}
+	}
+	else 
+	{
+		std::cout << "Invalid group \n";
+	}
+
+}
+
+void BuilderClass::buildShroom(int &stage, float &Radio, float &X, float &Y)
+{
+	if (stage == 0)
+	{
+		for (int circle_stage = 0; circle_stage < 12; circle_stage++)
+		{
+			buildCapCircles(circle_stage, Radio, X, Y);
+		}
+		
+	}
+	if (stage < 23)
+	{
+		buildTrunk(stage, Radio, X, Y);
+		setStage(getStage() + 1);
+		translateCircle(1);
+	}
+	else 
+	{
+		std::cout << "No se puede agregar mas circulos\n";
+	}
+	
 }
 
 void BuilderClass::buildTrunk(int &stage, float &Radio, float &X, float &Y)
@@ -69,7 +137,7 @@ void BuilderClass::buildTrunk(int &stage, float &Radio, float &X, float &Y)
 
 		buildCircle(stage, curved_radio, X, Y, (Z * stage));
 
-		setStage(getStage() + 1);
+		//setStage(getStage() + 1);
 	}
 	else 
 	{
@@ -129,28 +197,50 @@ void BuilderClass::deleteCircle()
 	setStage(getStage() - 1);
 }
 
-void BuilderClass::buildCapCircles(int &stage, float &Radio, float &X, float &Y)
+void BuilderClass::buildCapCircles(int &circle_stage, float &Radio, float &X, float &Y)
 {
-	float Z = 0.1;
-	if (stage < 23)
+	float curved_radio;
+
+	float Z = 0.05;
+
+	if (circle_stage == 0) // Decremento gradual del radio 1 - 8
 	{
-		if (stage < 8) // Decremento gradual del radio 1 - 8
-		{
-			trunk_curvation += 0.4 * PI / 8; // El "0.4" y el "8" ajusta la suavidad del decremento
-		}
-		if (stage > 20 && stage < 25) // Decremento gradual del radio 20 - 25
-		{
-			trunk_curvation += 0.2 * PI / 8;
-		}
-		float curved_radio = Radio * (cos(trunk_curvation));
-
-		buildCircle(stage, curved_radio, X, Y, (Z * stage));
-
-		setStage(getStage() + 1);
+		cap_curvation += 0.5 * PI / 4; // El "0.4" y el "8" ajusta la suavidad del decremento
+		buildCapCircle(circle_stage, Radio / 2, X, Y, (Z * circle_stage));
 	}
-	else
+	if (circle_stage > 0 && circle_stage < 12) // Decremento gradual del radio 20 - 25
 	{
-		std::cout << "No se puede agregar mas circulos\n";
+		cap_curvation += 0.8 * PI / 11;
+		curved_radio = Radio * (sin(cap_curvation));
+		buildCapCircle(circle_stage, curved_radio, X, Y, (Z * circle_stage));
+	}
+	
+}
+
+void BuilderClass::buildCapCircle(int &circle_stage, float Radio, float &X, float &Y, float Z)
+{
+
+	float t = 0; // Angle parameter.
+
+	for (int i = 0; i < vertex_quantity; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			if (j == 0)
+			{
+				cap_group[circle_stage][i][j] = X + Radio * cos(t);
+			}
+			else if (j == 1)
+			{
+				cap_group[circle_stage][i][j] = Y + Radio * sin(t);
+			}
+			else
+			{
+				cap_group[circle_stage][i][j] = Z;
+			}
+
+		}
+		t += 2 * PI / vertex_quantity;
 	}
 }
 
