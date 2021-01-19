@@ -2,16 +2,27 @@
 #define BUILDER_CLASS_H
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <vector>
+
 class BuilderClass
 {
 public:
+	
 	BuilderClass(int &vertexquantity, float &radio, float &X, float &Y, int &y_segments);
 
 	void buildCap(int&, float&, float&, float&, int&);
 	void buildTrunk(int&, float&, float&, float&);
+	void buildCapCircles(int&, float&, float&, float&);
 	void buildCircle(int&, float, float&, float&, float);
+	void deleteCircle();
+	void showTrunk() const;
+	void showCap() const;
 
+	void setStage(int);
+	int getStage() const;
+
+	float trunk_curvation = 0;
+	int stage = 0;
+	const int vertex_quantity = 20;
 private:
 	void translateCircle();
 	void scalateCircle();
@@ -20,13 +31,15 @@ private:
 	// SET
 	void setLocation();
 
+
 	// GET
-	std::vector<float> getLocation() const;
-	std::vector<float> getCircle(int) const;
+	float* getLocation() const;
+	float* getCircle(int) const;
+
 
 	// VARS
-	int stage;
-	std::vector<float> location = {0, 0};
-	std::vector<float> circles = {0, 0};
+	float cap_group[10][20][3] = { 0 };
+	float circle_group[24][20][3] = { 0 };
 };
 #endif // BUILDER_CLASS_H
+
