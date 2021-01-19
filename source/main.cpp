@@ -11,7 +11,9 @@ static float Radio = 0.3;
 static int numVertices = 5;
 static int y_segments = 1;
 static float z_height = 0.1;
+
 BuilderClass hongo_1(numVertices, Radio, X, Y, y_segments);
+
 // Drawing routine.
 void drawScene(void)
 {
@@ -28,7 +30,7 @@ void drawScene(void)
 	glTranslatef(Xvalue, Yvalue, -5.0);
 	glRotatef(Angle, 1.0, 1.0, 1.0);
 	
-	hongo_1.buildTrunk(numVertices, Radio, X, Y);
+	hongo_1.showTrunk();
 
 	glutSwapBuffers();
 }
@@ -63,11 +65,13 @@ void keyInput(unsigned char key, int x, int y)
 		glutPostRedisplay();
 		break;
 	case 'p':
-		y_segments++;
+		hongo_1.buildTrunk(hongo_1.stage, Radio, X, Y);
+		//hongo_1.buildCap(hongo_1.stage, Radio, X, Y, numVertices);
 		glutPostRedisplay();
 		break;
 	case 'o':
-		y_segments--;
+		hongo_1.deleteCircle();
+		//hongo_1.buildCap(hongo_1.stage, Radio, X, Y, numVertices);
 		glutPostRedisplay();
 		break;
 	case 'r':
@@ -108,7 +112,6 @@ void printInteraction(void)
 // Main routine.
 int main(int argc, char **argv)
 {
-	
 	printInteraction();
 	glutInit(&argc, argv);
 
