@@ -17,12 +17,6 @@ BuilderClass hongo_1(numVertices, Radio, X, Y, y_segments);
 // Drawing routine.
 void drawScene(void)
 {
-	float t = 0; // Angle parameter.
-	float t_90 = 0;
-	int i;
-	int j;
-	float eje_x = 0;
-	float eje_y = 0;
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glLoadIdentity();
@@ -65,8 +59,9 @@ void keyInput(unsigned char key, int x, int y)
 		glutPostRedisplay();
 		break;
 	case 'p':
-		hongo_1.buildTrunk(hongo_1.stage, Radio, X, Y);
-		//hongo_1.buildCap(hongo_1.stage, Radio, X, Y, numVertices);
+		hongo_1.buildShroom(hongo_1.stage, Radio, X, Y);
+		//hongo_1.buildTrunk(hongo_1.stage, Radio, X, Y);
+		//hongo_1.buildCapCircles(hongo_1.stage, Radio, X, Y);
 		glutPostRedisplay();
 		break;
 	case 'o':
