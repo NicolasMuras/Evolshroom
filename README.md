@@ -7,6 +7,7 @@ Compiled in Visual Studio 2017
 
 Next steps:
   - The mushroom cap must follow the trunk.
+  - Mushrooms of random generated heights.
   - In game menu to make a shroom with the parameters: base radius and X, Y position.
   - Show FPS info in game.
   - Make a random generated "total inclination" for each shroom.
