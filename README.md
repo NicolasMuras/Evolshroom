@@ -7,5 +7,10 @@ Compiled in Visual Studio 2017
 
 Next steps:
   - The mushroom cap must follow the trunk.
-  - Menu in game to specify the base radius and X, Y position of the shroom.
+  - In game menu to make a shroom with the parameters: base radius and X, Y position.
   - Show FPS info in game.
+  - Make a random generated "total inclination" for each shroom.
+  - In game menu option to make a cumulus of shrooms (we will use "total inclination" for this).
+  - Implement VBO and VBA.
+  - Textures
+  - Shaders
