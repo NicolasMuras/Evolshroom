@@ -7,14 +7,14 @@ class BuilderClass
 {
 public:
 	
-	BuilderClass(float &radio, float &X, float &Y);
+	BuilderClass(float radio, float X, float Y);
 
-	void buildShroom(int &, float &, float &, float &);
+	void buildShroom();
 	void buildCap(int&, float&, float&, float&, int&);
-	void buildTrunk(int&, float&, float&, float&);
-	void buildCapCircles(int&, float&, float&, float&);
-	void buildCircle(int&, float, float&, float&, float);
-	void buildCapCircle(int&, float, float&, float&, float);
+	void buildTrunk();
+	void buildCapCircles(int&);
+	void buildCircle(float, float&, float);
+	void buildCapCircle(int&, float, float);
 	int getRandomInt(int, int);
 	float getRandomFloat(int, int);
 	void showMushroom() const;
@@ -39,19 +39,15 @@ public:
 	int trunk_curvation_end = 23;
 private:
 	void translateCircle(int);
-	void scalateCircle();
-	void rotateCircle();
 
 	// SET
-	void setLocation();
+	void setLocation(float, float, float);
 	void setRandomCurvation();
 
-	// GET
-	float* getLocation() const;
-	float* getCircle(int) const;
-
-
 	// VARS
+	float X_Loc = 0;
+	float Y_Loc = 0;
+	float Radio_Loc = 0;
 	float cap_group[12][20][3] = { 0 };
 	float circle_group[24][20][3] = { 0 };
 };
