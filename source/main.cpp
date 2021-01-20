@@ -7,12 +7,14 @@ static float Xvalue = 0.0, Yvalue = 0.0; // Co-ordinates of the sphere.
 static float Angle = 0.0; // Angle to rotate the sphere.
 static float X = 0.0; // X-coordinate of center of circle.
 static float Y = 0.0; // Y-coordinate of center of circle.
+static float X_2 = 1.0; // X-coordinate of center of circle.
+static float Y_2 = 1.0; // Y-coordinate of center of circle.
 static float Radio = 0.3;
 static int numVertices = 5;
 static int y_segments = 1;
 static float z_height = 0.1;
 
-BuilderClass hongo_1(numVertices, Radio, X, Y, y_segments);
+BuilderClass hongo_1(Radio, X, Y);
 
 // Drawing routine.
 void drawScene(void)
@@ -24,7 +26,7 @@ void drawScene(void)
 	glTranslatef(Xvalue, Yvalue, -5.0);
 	glRotatef(Angle, 1.0, 1.0, 1.0);
 	
-	hongo_1.showTrunk();
+	hongo_1.showMushroom();
 
 	glutSwapBuffers();
 }
@@ -60,13 +62,6 @@ void keyInput(unsigned char key, int x, int y)
 		break;
 	case 'p':
 		hongo_1.buildShroom(hongo_1.stage, Radio, X, Y);
-		//hongo_1.buildTrunk(hongo_1.stage, Radio, X, Y);
-		//hongo_1.buildCapCircles(hongo_1.stage, Radio, X, Y);
-		glutPostRedisplay();
-		break;
-	case 'o':
-		hongo_1.deleteCircle();
-		//hongo_1.buildCap(hongo_1.stage, Radio, X, Y, numVertices);
 		glutPostRedisplay();
 		break;
 	case 'r':
@@ -116,7 +111,7 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(1000, 1000);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("moveSphere.cpp");
+	glutCreateWindow("Evolshroom.cpp");
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(resize);
 	glutKeyboardFunc(keyInput);
