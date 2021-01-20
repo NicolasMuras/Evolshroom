@@ -1,21 +1,15 @@
 #include <iostream>
+#include "scene_class.h"
 #include "builder_class.h"
-
+#include <random>
+#include <time.h>
 #define PI 3.14159265358979324
 // Globals.
 static float Xvalue = 0.0, Yvalue = 0.0; // Co-ordinates of the sphere.
 static float Angle = 0.0; // Angle to rotate the sphere.
-static float X = 0.0; // X-coordinate of center of circle.
-static float Y = 0.0; // Y-coordinate of center of circle.
-static float X_2 = 1.0; // X-coordinate of center of circle.
-static float Y_2 = 1.0; // Y-coordinate of center of circle.
-static float Radio = 0.3;
-static int numVertices = 5;
-static int y_segments = 1;
-static float z_height = 0.1;
 
-BuilderClass hongo_1(Radio, X, Y);
-
+Scene scene_1(1, 1);
+float getRandomFloat(float, float);
 // Drawing routine.
 void drawScene(void)
 {
@@ -25,9 +19,12 @@ void drawScene(void)
 	// Set the position of the sphere.
 	glTranslatef(Xvalue, Yvalue, -5.0);
 	glRotatef(Angle, 1.0, 1.0, 1.0);
-	
-	hongo_1.showMushroom();
 
+	for (int i = 0; i < scene_1.Mushrooms_ID.size(); i++)
+	{
+		scene_1.Mushrooms_ID[i].showMushroom();
+	}
+	
 	glutSwapBuffers();
 }
 
@@ -53,15 +50,15 @@ void keyInput(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case '+':
-		numVertices++;
-		glutPostRedisplay();
-		break;
-	case '-':
-		if (numVertices > 3) numVertices--;
+		scene_1.newMushroom(getRandomFloat(0.2, 0.7), getRandomFloat(-1.0, 1.0), getRandomFloat(-1.0, 1.0));
 		glutPostRedisplay();
 		break;
 	case 'p':
-		hongo_1.buildShroom(hongo_1.stage, Radio, X, Y);
+		for (int i = 0; i < scene_1.Mushrooms_ID.size(); ++i)
+		{
+			scene_1.Mushrooms_ID[i].buildShroom();
+		}
+
 		glutPostRedisplay();
 		break;
 	case 'r':
@@ -125,4 +122,11 @@ int main(int argc, char **argv)
 	setup();
 
 	glutMainLoop();
+}
+
+float getRandomFloat(float start, float end)
+{
+	std::mt19937 rng(time(NULL) * 15000);
+	std::uniform_real_distribution<float> uniform_dist(start, end);
+	return uniform_dist(rng);
 }
