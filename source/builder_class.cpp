@@ -28,22 +28,35 @@ void BuilderClass::setLocation(float radio, float x, float y)
 	Radio_Loc = radio;
 }
 
-void BuilderClass::setRandomCurvation()
+void BuilderClass::setRandomCurvation() // Set variables that generate variations on the mushroom geometry
 {
-	curvation_start = getRandomInt(1, 9);
-	std::cout << "curvation_start: " << curvation_start << '\n';
-	curvation_end = getRandomInt(10, 23);
-	std::cout << "curvation_end: " << curvation_end << '\n';
-	curvation_direction = getRandomInt(0, 1);
-	std::cout << "curvation_direction: " << curvation_direction << '\n';
-
-
+	std::cout << "----------------------- MUSHROOM-INFO ----------------------- \n";
 	root_curvation_end = getRandomInt(2, 9);
 	std::cout << "root_curvation_end: " << root_curvation_end << '\n';
-	trunk_curvation_start = getRandomInt(root_curvation_end, 9);
+
+	curvation_start = getRandomInt(root_curvation_end, 9);
+	std::cout << "curvation_start: " << curvation_start << '\n';
+	if (curvation_start > 7)
+	{
+		curvation_end = getRandomInt(15, 23);
+	}
+	else {
+		curvation_end = getRandomInt(10, 23);
+	}
+	std::cout << "curvation_end: " << curvation_end << '\n';
+
+
+	curvation_direction = 0;//getRandomInt(0, 1);
+	std::cout << "curvation_direction: " << curvation_direction << '\n';
+
+	trunk_curvation_start = curvation_start;
 	std::cout << "trunk_curvation_start: " << trunk_curvation_start << '\n';
-	trunk_curvation_end = getRandomInt(10, 23);
+	trunk_curvation_end = curvation_end;
 	std::cout << "trunk_curvation_end: " << trunk_curvation_end << '\n';
+
+	curvature_size = getRandomFloat(1, 2);
+	std::cout << "curvature_size: " << curvature_size << '\n';
+	std::cout << "------------------------------------------------------------- \n";
 }
 
 int BuilderClass::getRandomInt(int start, int end)
@@ -93,35 +106,6 @@ void BuilderClass::showMushroom() const  // Draw the mushroom in the window
 	}
 }
 
-void BuilderClass::translateCircle(int group) // Translate the cap in Z axis
-{
-	if (group == 1)
-	{
-		for (int i = 0; i < 12; ++i) // This move translate the cap in Z, this way we can simulate the grow movement
-		{
-			for (int j = 0; j < 20; ++j)
-			{
-				cap_group[i][j][2] += 0.1;
-			}
-		}
-	}
-	else if (group == 2) 
-	{
-		for (int i = 0; i < getStage(); ++i)
-		{
-			for (int j = 0; j < 20; ++j)
-			{
-				circle_group[i][j][2] += 0.1;
-			}
-		}
-	}
-	else 
-	{
-		std::cout << "Invalid group \n";
-	}
-
-}
-
 void BuilderClass::buildShroom() // Build shrooms main function
 {
 	if (getStage() == 0)
@@ -136,7 +120,6 @@ void BuilderClass::buildShroom() // Build shrooms main function
 	{
 		buildTrunk();
 		setStage(getStage() + 1);
-		translateCircle(1);
 	}
 	
 }
@@ -150,11 +133,11 @@ void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradua
 		{
 			if (curvation_direction == 0) // Choose the direction
 			{
-				circle_translation -= ((curvation_end - curvation_start) / 10) * PI / (curvation_end - curvation_start);
+				circle_translation -= ((curvation_end - curvation_start) / 10) * PI / (curvation_end - curvation_start) * curvature_size;
 			}
 			else
 			{
-				circle_translation += ((curvation_end - curvation_start) / 10) * PI / (curvation_end - curvation_start);
+				circle_translation += ((curvation_end - curvation_start) / 10) * PI / (curvation_end - curvation_start) * curvature_size;
 			}
 		}
 
@@ -162,11 +145,11 @@ void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradua
 		{
 			if (curvation_direction == 0) // Reverse direction.
 			{
-				circle_translation += ((23 - curvation_end) / 10) * PI / (23 - curvation_end);
+				circle_translation += ((23 - curvation_end) / 10) * PI / (23 - curvation_end) * curvature_size;
 			}
 			else
 			{
-				circle_translation -= ((23 - curvation_end) / 10) * PI / (23 - curvation_end);
+				circle_translation -= ((23 - curvation_end) / 10) * PI / (23 - curvation_end) * curvature_size;
 			}
 		}
 
@@ -177,15 +160,18 @@ void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradua
 
 		if (getStage() > trunk_curvation_start && getStage() < trunk_curvation_end) // Decremento gradual del radio 20 - 23
 		{
-			if (Radio_Loc * (cos(trunk_curvation)) > (Radio_Loc / 6))
+			if (Radio_Loc * (cos(trunk_curvation)) > (Radio_Loc / 5.5))
 			{
 				trunk_curvation += 0.1 * PI / (trunk_curvation_end - trunk_curvation_start);
 			}
 		}
 
-		float curved_radio = Radio_Loc * (cos(trunk_curvation));
-		float curved_translation_y = Y_Loc + curved_radio * sin(circle_translation);
-		buildCircle(curved_radio, curved_translation_y, (Z * getStage()));
+		
+		float curved_translation_y = Y_Loc + Radio_Loc * (cos(trunk_curvation)) * sin(circle_translation);
+
+		
+		
+		buildCircle(curved_translation_y, (Z * getStage()));
 	}
 	else 
 	{
@@ -193,23 +179,23 @@ void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradua
 	}
 }
 
-void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z) // Build the circle with the current curved radios and translations.
+void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build the circle with the current curved radios and translations.
 {
 
 	float t = 0; // Angle parameter.
 	float inclination_y = 0;
 	float inclination_z = 0;
-	float angle = 0;
-
+	float Radio = Radio_Loc * (cos(trunk_curvation));
 	static float rotation_var = 0;
+
 	if (getStage() > curvation_start && getStage() < curvation_end)
 	{
 		if (curvation_direction == 0)
 		{
-			rotation_var -= 0.05;
+			rotation_var -= 0.01;
 		}
 		else {
-			rotation_var += 0.05;
+			rotation_var += 0.01;
 		}
 		
 	}
@@ -217,10 +203,10 @@ void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z
 	{
 		if (curvation_direction == 0)
 		{
-			rotation_var += 0.05;
+			rotation_var += 0.01;
 		}
 		else {
-			rotation_var -= 0.05;
+			rotation_var -= 0.01;
 		}
 	}
 
@@ -228,9 +214,10 @@ void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z
 	{
 		if (getStage() > curvation_start && getStage() < curvation_end)
 		{
+
 			inclination_y = (Radio) * (cos(circle_inclination));
 			inclination_z = (Radio) * (sin(circle_inclination));
-			angle = asin(inclination_z / Radio);
+			// angle = asin(inclination_z / Radio);
 
 			if (curvation_direction == 0)
 			{
@@ -246,7 +233,8 @@ void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z
 		{
 			inclination_y = (Radio) * (cos(circle_inclination));
 			inclination_z = (Radio) * (sin(circle_inclination));
-			angle = asin(inclination_z / Radio);
+			// angle = asin(inclination_z / Radio);
+			
 			if (curvation_direction == 0)
 			{
 				circle_inclination += 2 * PI / 20;
@@ -256,6 +244,11 @@ void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z
 				circle_inclination -= 2 * PI / 20;
 			}
 		}
+
+		// Cap follows the trunk
+		z_inclinationCap(rotation_var, i);
+		y_translateCap(curved_translation_y, i, t);
+
 
 		for (int j = 0; j < 3; ++j)
 		{
@@ -269,7 +262,6 @@ void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z
 			}
 			else if(j == 2)
 			{
-				
 				circle_group[getStage()][i][j] = Z + (inclination_z * rotation_var);
 			}
 
@@ -279,22 +271,39 @@ void BuilderClass::buildCircle(float Radio, float &curved_translation_y, float Z
 	}
 }
 
+void BuilderClass::z_inclinationCap(float rotation, int vertex)
+{
+	float Z = 0.05;
+	for (int i = 0; i < 12; ++i)
+	{
+		cap_group[i][vertex][2] = (getStage() * 0.1) + (Z * i) + ((cap_radius[i] * sin(circle_inclination)) * rotation);
+	}
+}
+
+void BuilderClass::y_translateCap(float y_curvation, int vertex, float angle) // This translate the shroom cap on Y axis.
+{
+	for (int i = 0; i < 12; ++i)
+	{
+		cap_group[i][vertex][1] = y_curvation + cap_radius[i] * sin(angle);
+	}
+}
+
 void BuilderClass::buildCapCircles(int &circle_stage) // Build cap circles main function, set the radius curvature of the cap circles.
 {
-	float curved_radio;
 
 	float Z = 0.05;
 
-	if (circle_stage == 0) // Decremento gradual del radio 1 - 8
+	if (circle_stage == 0)
 	{
-		cap_curvation += 0.5 * PI / 4; // El "0.4" y el "8" ajusta la suavidad del decremento
+		cap_curvation += 0.5 * PI / 4;
+		cap_radius[circle_stage] = Radio_Loc / 2;
 		buildCapCircle(circle_stage, Radio_Loc / 2, (Z * circle_stage));
 	}
-	if (circle_stage > 0 && circle_stage < 12) // Decremento gradual del radio 20 - 25
+	if (circle_stage > 0 && circle_stage < 12)
 	{
 		cap_curvation += 0.8 * PI / 11;
-		curved_radio = Radio_Loc * (sin(cap_curvation));
-		buildCapCircle(circle_stage, curved_radio, (Z * circle_stage));
+		cap_radius[circle_stage] = Radio_Loc * (sin(cap_curvation));
+		buildCapCircle(circle_stage, cap_radius[circle_stage], (Z * circle_stage));
 	}
 	
 }
@@ -324,55 +333,4 @@ void BuilderClass::buildCapCircle(int &circle_stage, float Radio, float Z) // Bu
 		}
 		t += 2 * PI / vertex_quantity;
 	}
-}
-
-void BuilderClass::buildCap(int &stage, float &Radio, float &X, float &Y, int &numVertices) // DON'T WORK
-{
-	float t = 0; // Angle parameter.
-	float t_90 = 0;
-	int i;
-	int j;
-	float eje_x = 0;
-	float eje_y = 0;
-
-	glBegin(GL_TRIANGLES);
-	for (i = 0; i < numVertices; ++i)
-	{
-		glColor3f((float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX, (float)rand() / (float)RAND_MAX);
-		eje_x = X + Radio * cos(t);
-		eje_y = Y + Radio * sin(t);
-
-		// CAP
-		glVertex3f(0.0, 0.0, 0.2 + stage * 0.1);
-		glVertex3f(X + Radio * cos(t), Y + Radio * sin(t), stage * 0.1);
-		glVertex3f(X + Radio * cos(t + 2 * PI / numVertices), Y + Radio * sin(t + 2 * PI / numVertices), stage * 0.1);
-
-		// Y SEGMENT STARTUP 
-		glVertex3f(eje_x, eje_y, stage * 0.1);
-		glVertex3f(X + (Radio * 1.2) * cos(t), Y + (Radio * 1.2) * sin(t), -0.1 + stage * 0.1);
-		glVertex3f(X + (Radio * 1.2) * cos(t + 2 * PI / numVertices), Y + (Radio * 1.2) * sin(t + 2 * PI / numVertices), -0.1 + stage * 0.1);
-
-		glVertex3f(X + Radio * cos(t + 2 * PI / numVertices), Y + Radio * sin(t + 2 * PI / numVertices), stage * 0.1);
-		glVertex3f(eje_x, eje_y, stage * 0.1);
-		glVertex3f(X + (Radio * 1.2) * cos(t + 2 * PI / numVertices), Y + (Radio * 1.2) * sin(t + 2 * PI / numVertices), -0.1 + stage * 0.1);
-
-		t += 2 * PI / numVertices;
-
-		// Y SEGMENTS pow((j * 0.2), PI)))
-
-		/*for (j = 0; j < y_segments; ++j)
-		{
-			glColor3f(j * 0.05, j * 0.1, j * 0.2);
-			glVertex3f(X + (Radio * (1.2 + j * 0.2)) * cos(t), Y + (Radio * (1.2 + j * 0.2)) * sin(t), numVertices * 0.1 + (j * -0.1));
-			glVertex3f(X + (Radio * (1.4 + j * 0.2)) * cos(t), Y + (Radio * (1.4 + j * 0.2)) * sin(t), (-0.1 + numVertices * 0.1) + (j * -0.1));
-			glVertex3f(X + (Radio * (1.4 + j * 0.2)) * cos(t + 2 * PI / numVertices), Y + (Radio * (1.4 + j * 0.2)) * sin(t + 2 * PI / numVertices), (-0.1 + numVertices * 0.1) + (j * -0.1));
-
-			glVertex3f(X + (Radio * (1.2 + j * 0.2)) * cos(t + 2 * PI / numVertices), Y + (Radio * (1.2 + j * 0.2)) * sin(t + 2 * PI / numVertices), numVertices * 0.1 + (j * -0.1));
-			glVertex3f(X + (Radio * (1.2 + j * 0.2)) * cos(t), Y + (Radio * (1.2 + j * 0.2)) * sin(t), numVertices * 0.1 + (j * -0.1));
-			glVertex3f(X + (Radio * (1.4 + j * 0.2)) * cos(t + 2 * PI / numVertices), Y + (Radio * (1.4 + j * 0.2)) * sin(t + 2 * PI / numVertices), (-0.1 + numVertices * 0.1) + (j * -0.1));
-		}*/
-		
-		//t_90 += 0.5 * PI / y_segments;
-	}
-	glEnd();
 }
