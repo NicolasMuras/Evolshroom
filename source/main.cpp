@@ -9,7 +9,14 @@ static float Xvalue = 0.0, Yvalue = 0.0; // Co-ordinates of the sphere.
 static float Angle = 0.0; // Angle to rotate the sphere.
 
 Scene scene_1(1, 1);
-float getRandomFloat(float, float);
+
+float getRandomFloat(float start, float end)
+{
+	std::mt19937 rng(time(NULL) * 15000);
+	std::uniform_real_distribution<float> uniform_dist(start, end);
+	return uniform_dist(rng);
+
+}
 // Drawing routine.
 void drawScene(void)
 {
@@ -91,8 +98,8 @@ void specialKeyInput(int key, int x, int y)
 void printInteraction(void)
 {
 	std::cout << "Interaction:" << std::endl;
-	std::cout << "Press the arrow keys to move the sphere." << std::endl
-		<< "Press the space bar to rotate the sphere." << std::endl
+	std::cout << "Press the arrow keys to move around the scene." << std::endl
+		<< "Press the space bar to rotate the scene." << std::endl
 		<< "Press r to reset." << std::endl;
 }
 
@@ -122,11 +129,4 @@ int main(int argc, char **argv)
 	setup();
 
 	glutMainLoop();
-}
-
-float getRandomFloat(float start, float end)
-{
-	std::mt19937 rng(time(NULL) * 15000);
-	std::uniform_real_distribution<float> uniform_dist(start, end);
-	return uniform_dist(rng);
 }
