@@ -1,6 +1,5 @@
 #include "scene_class.h"
 #include "builder_class.h"
-using namespace std;
 
 Scene::Scene(float X, float Y)
 {
