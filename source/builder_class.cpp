@@ -9,7 +9,7 @@ using namespace std;
 BuilderClass::BuilderClass(float radio, float X, float Y)
 {
 	setLocation(radio, X, Y);
-	setRandomCurvation();
+	setRandomVars();
 }
 
 void BuilderClass::setStage(int value)
@@ -28,25 +28,28 @@ void BuilderClass::setLocation(float radio, float x, float y)
 	Radio_Loc = radio;
 }
 
-void BuilderClass::setRandomCurvation() // Set variables that generate variations on the mushroom geometry
+void BuilderClass::setRandomVars() // Set variables that generate variations on the mushroom geometry
 {
 	std::cout << "----------------------- MUSHROOM-INFO ----------------------- \n";
+
+	max_stage = getRandomInt(18, 25);
+	std::cout << "max_stage: " << max_stage << '\n';
+
 	root_curvation_end = getRandomInt(2, 9);
 	std::cout << "root_curvation_end: " << root_curvation_end << '\n';
 
-	curvation_start = getRandomInt(root_curvation_end, 9);
+	curvation_start = getRandomInt(2, 9);
 	std::cout << "curvation_start: " << curvation_start << '\n';
 	if (curvation_start > 7)
 	{
-		curvation_end = getRandomInt(15, 23);
+		curvation_end = getRandomInt((max_stage/2), max_stage);
 	}
 	else {
-		curvation_end = getRandomInt(10, 23);
+		curvation_end = getRandomInt((max_stage/2) - 4, max_stage);
 	}
 	std::cout << "curvation_end: " << curvation_end << '\n';
 
-
-	curvation_direction = 0;//getRandomInt(0, 1);
+	curvation_direction = getRandomInt(0, 1);
 	std::cout << "curvation_direction: " << curvation_direction << '\n';
 
 	trunk_curvation_start = curvation_start;
@@ -56,6 +59,13 @@ void BuilderClass::setRandomCurvation() // Set variables that generate variation
 
 	curvature_size = getRandomFloat(1, 2);
 	std::cout << "curvature_size: " << curvature_size << '\n';
+
+	min_trunk_width = getRandomFloat(3, 8);
+	std::cout << "min_trunk_width: " << min_trunk_width << '\n';
+
+	cap_flatness = getRandomFloat(3, 7) / 100;
+	std::cout << "cap_flatness: " << cap_flatness << '\n';
+
 	std::cout << "------------------------------------------------------------- \n";
 }
 
@@ -116,7 +126,7 @@ void BuilderClass::buildShroom() // Build shrooms main function
 		}
 		
 	}
-	if (getStage() < 23)
+	if (getStage() < max_stage)
 	{
 		buildTrunk();
 		setStage(getStage() + 1);
@@ -124,12 +134,12 @@ void BuilderClass::buildShroom() // Build shrooms main function
 	
 }
 
-void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradual curvature of the circle radius.
+void BuilderClass::buildTrunk() // Implement random generated vars to build the shroom.
 {
-	float Z = 0.1;
-	if (getStage() < 23)
+	float Z = 0.1; // Height multiplicator.
+	if (getStage() < max_stage)
 	{
-		if (getStage() > curvation_start && getStage() < curvation_end) // Make curvation in the Y axis.
+		if (getStage() > curvation_start && getStage() < curvation_end) // Make translation in the circles of the trunk.
 		{
 			if (curvation_direction == 0) // Choose the direction
 			{
@@ -141,15 +151,15 @@ void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradua
 			}
 		}
 
-		if (getStage() > curvation_end && getStage() < 23) // Reverse the curvation in the Y axis.
+		if (getStage() > curvation_end && getStage() < max_stage) // Reverse the translation in the circles of the trunk.
 		{
 			if (curvation_direction == 0) // Reverse direction.
 			{
-				circle_translation += ((23 - curvation_end) / 10) * PI / (23 - curvation_end) * curvature_size;
+				circle_translation += ((max_stage - curvation_end) / 10) * PI / (23 - curvation_end) * curvature_size;
 			}
 			else
 			{
-				circle_translation -= ((23 - curvation_end) / 10) * PI / (23 - curvation_end) * curvature_size;
+				circle_translation -= ((max_stage - curvation_end) / 10) * PI / (23 - curvation_end) * curvature_size;
 			}
 		}
 
@@ -160,30 +170,24 @@ void BuilderClass::buildTrunk() // Set the curvature of the trunk and the gradua
 
 		if (getStage() > trunk_curvation_start && getStage() < trunk_curvation_end) // Decremento gradual del radio 20 - 23
 		{
-			if (Radio_Loc * (cos(trunk_curvation)) > (Radio_Loc / 5.5))
+			if (Radio_Loc * (cos(trunk_curvation)) > (Radio_Loc / min_trunk_width))
 			{
 				trunk_curvation += 0.1 * PI / (trunk_curvation_end - trunk_curvation_start);
 			}
 		}
 
-		
 		float curved_translation_y = Y_Loc + Radio_Loc * (cos(trunk_curvation)) * sin(circle_translation);
+		float curved_translation_x = X_Loc + Radio_Loc * (cos(trunk_curvation)) * cos(circle_translation);
 
-		
-		
-		buildCircle(curved_translation_y, (Z * getStage()));
-	}
-	else 
-	{
-		std::cout << "No se puede agregar mas circulos\n";
+		buildCircle(curved_translation_y, curved_translation_x,(Z * getStage()));
 	}
 }
 
-void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build the circle with the current curved radios and translations.
+void BuilderClass::buildCircle(float curved_translation_y, float curved_translation_x, float Z) // Build the circle with the current curved radius and translations.
 {
 
-	float t = 0; // Angle parameter.
-	float inclination_y = 0;
+	float angle = 0; // Angle parameter.
+	//float inclination_y = 0;
 	float inclination_z = 0;
 	float Radio = Radio_Loc * (cos(trunk_curvation));
 	static float rotation_var = 0;
@@ -192,21 +196,21 @@ void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build th
 	{
 		if (curvation_direction == 0)
 		{
-			rotation_var -= 0.01;
+			rotation_var -= 0.015;
 		}
 		else {
-			rotation_var += 0.01;
+			rotation_var += 0.015;
 		}
 		
 	}
-	if (getStage() > curvation_end && getStage() < 23)
+	else if (getStage() > curvation_end && getStage() < max_stage)
 	{
 		if (curvation_direction == 0)
 		{
-			rotation_var += 0.01;
+			rotation_var += 0.015;
 		}
 		else {
-			rotation_var -= 0.01;
+			rotation_var -= 0.015;
 		}
 	}
 
@@ -215,9 +219,8 @@ void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build th
 		if (getStage() > curvation_start && getStage() < curvation_end)
 		{
 
-			inclination_y = (Radio) * (cos(circle_inclination));
+			//inclination_y = (Radio) * (cos(circle_inclination));
 			inclination_z = (Radio) * (sin(circle_inclination));
-			// angle = asin(inclination_z / Radio);
 
 			if (curvation_direction == 0)
 			{
@@ -228,12 +231,10 @@ void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build th
 				circle_inclination += 2 * PI / 20;
 			}
 		}
-
-		if (getStage() > curvation_end && getStage() < 23)
+		else if (getStage() > curvation_end && getStage() < max_stage)
 		{
-			inclination_y = (Radio) * (cos(circle_inclination));
+			//inclination_y = (Radio) * (cos(circle_inclination));
 			inclination_z = (Radio) * (sin(circle_inclination));
-			// angle = asin(inclination_z / Radio);
 			
 			if (curvation_direction == 0)
 			{
@@ -247,18 +248,18 @@ void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build th
 
 		// Cap follows the trunk
 		z_inclinationCap(rotation_var, i);
-		y_translateCap(curved_translation_y, i, t);
-
+		y_translateCap(curved_translation_y, i, angle);
+		x_translateCap(curved_translation_x, i, angle);
 
 		for (int j = 0; j < 3; ++j)
 		{
 			if (j == 0)
 			{
-				circle_group[getStage()][i][j] = X_Loc + Radio * cos(t);
+				circle_group[getStage()][i][j] = (curved_translation_x + Radio * cos(angle));
 			}
 			else if(j == 1)
 			{
-				circle_group[getStage()][i][j] = (curved_translation_y + Radio * sin(t));
+				circle_group[getStage()][i][j] = (curved_translation_y + Radio * sin(angle));
 			}
 			else if(j == 2)
 			{
@@ -267,13 +268,13 @@ void BuilderClass::buildCircle(float &curved_translation_y, float Z) // Build th
 
 		}
 		
-		t += 2 * PI / vertex_quantity;
+		angle += 2 * PI / vertex_quantity;
 	}
 }
 
 void BuilderClass::z_inclinationCap(float rotation, int vertex)
 {
-	float Z = 0.05;
+	float Z = cap_flatness;
 	for (int i = 0; i < 12; ++i)
 	{
 		cap_group[i][vertex][2] = (getStage() * 0.1) + (Z * i) + ((cap_radius[i] * sin(circle_inclination)) * rotation);
@@ -288,10 +289,18 @@ void BuilderClass::y_translateCap(float y_curvation, int vertex, float angle) //
 	}
 }
 
+void BuilderClass::x_translateCap(float x_curvation, int vertex, float angle) // This translate the shroom cap on Y axis.
+{
+	for (int i = 0; i < 12; ++i)
+	{
+		cap_group[i][vertex][0] = x_curvation + cap_radius[i] * cos(angle);
+	}
+}
+
 void BuilderClass::buildCapCircles(int &circle_stage) // Build cap circles main function, set the radius curvature of the cap circles.
 {
 
-	float Z = 0.05;
+	float Z = cap_flatness;
 
 	if (circle_stage == 0)
 	{
