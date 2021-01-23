@@ -12,8 +12,9 @@ void Scene::setArea(float x, float y)
 	area_y = y;
 }
 
-void Scene::newMushroom(float Radio, float X, float Y)
+void Scene::newMushroom(float Radio, float X, float Y, float red, float green, float blue)
 {
-	BuilderClass Shroom(Radio, X, Y);
+	BuilderClass Shroom(Radio, X, Y, red, green, blue);
 	Mushrooms_ID.push_back(Shroom);
+	total_entities++;
 }
