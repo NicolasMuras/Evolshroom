@@ -6,10 +6,14 @@
 #define PI 3.14159265358979324
 using namespace std;
 
-BuilderClass::BuilderClass(float radio, float X, float Y)
+BuilderClass::BuilderClass(float radio, float X, float Y, float r, float g, float b)
 {
 	setLocation(radio, X, Y);
 	setRandomVars();
+	generateIndicesCap();
+	setColors(r, g, b);
+	buildShroom();
+	buildShroom();
 }
 
 void BuilderClass::setStage(int value)
@@ -26,6 +30,42 @@ void BuilderClass::setLocation(float radio, float x, float y)
 	X_Loc = x;
 	Y_Loc = y;
 	Radio_Loc = radio;
+}
+
+std::vector<unsigned int> BuilderClass::getIndices()
+{
+	return indices;
+}
+void BuilderClass::showMushroom() const  // Draw the mushroom in the window
+{
+	for (int i = 0; i <= getStage(); ++i)
+	{
+		glBegin(GL_LINE_LOOP);
+		glColor3f(0.1 * getStage(), 0.0, 0.0);
+		for (int j = 0; j < 20; ++j)
+		{
+			glVertex3f(circle_group[i][j][0], circle_group[i][j][1], circle_group[i][j][2]);
+		}
+		glEnd();
+		glFlush();
+	}
+
+	for (int k = 0; k < 12; ++k)
+	{
+
+		glBegin(GL_LINE_LOOP);
+		glColor3f(0.0, 0.0, 0.1 * getStage());
+		for (int j = 0; j < 20; ++j)
+		{
+			if (k > 11) {
+				continue;
+			}
+			glVertex3f(cap_group[k][j][0], cap_group[k][j][1], cap_group[k][j][2]);
+
+		}
+		glEnd();
+		glFlush();
+	}
 }
 
 void BuilderClass::setRandomVars() // Set variables that generate variations on the mushroom geometry
@@ -69,57 +109,26 @@ void BuilderClass::setRandomVars() // Set variables that generate variations on 
 	std::cout << "------------------------------------------------------------- \n";
 }
 
-int BuilderClass::getRandomInt(int start, int end)
+int BuilderClass::getRandomInt(int start, int end) const
 {
-	std::mt19937 rng(time(NULL));
+	std::mt19937 rng(time(NULL) * 15000);
 	std::uniform_int_distribution<int> uniform_dist(start, end);
 
 	return uniform_dist(rng);
 }
 
-float BuilderClass::getRandomFloat(int start, int end)
+float BuilderClass::getRandomFloat(int start, int end) const
 {
-	std::mt19937 rng(time(NULL));
+	std::mt19937 rng(time(NULL) * 15000);
 	std::uniform_real_distribution<float> uniform_dist(start, end);
 	return uniform_dist(rng);
-}
-
-void BuilderClass::showMushroom() const  // Draw the mushroom in the window
-{
-	for (int i = 0; i <= getStage(); ++i)
-	{
-		glBegin(GL_LINE_LOOP);
-		glColor3f(0.1 * getStage(), 0.0, 0.0);
-		for (int j = 0; j < 20; ++j)
-		{
-			glVertex3f(circle_group[i][j][0], circle_group[i][j][1], circle_group[i][j][2]);
-		}
-		glEnd();
-		glFlush();
-	}
-	
-	for (int k = 0; k < 12; ++k)
-	{
-		
-		glBegin(GL_LINE_LOOP);
-		glColor3f(0.0, 0.0, 0.1 * getStage());
-		for (int j = 0; j < 20; ++j)
-		{
-			if (k > 11) {
-				continue;
-			}
-			glVertex3f(cap_group[k][j][0], cap_group[k][j][1], cap_group[k][j][2]);
-
-		}
-		glEnd();
-		glFlush();
-	}
 }
 
 void BuilderClass::buildShroom() // Build shrooms main function
 {
 	if (getStage() == 0)
 	{
+		
 		for (int circle_stage = 0; circle_stage < 12; circle_stage++)
 		{
 			buildCapCircles(circle_stage);
@@ -130,6 +139,9 @@ void BuilderClass::buildShroom() // Build shrooms main function
 	{
 		buildTrunk();
 		setStage(getStage() + 1);
+		generateIndices();
+		generateColors();
+		generateColorsCap();
 	}
 	
 }
@@ -341,5 +353,162 @@ void BuilderClass::buildCapCircle(int &circle_stage, float Radio, float Z) // Bu
 
 		}
 		t += 2 * PI / vertex_quantity;
+	}
+}
+
+void BuilderClass::generateIndices()
+{
+	int faces = ((20 * (getStage() - 1) * 2) * 3) + 6;
+	indices.resize(faces);
+
+	int elIndex = 0;
+	std::cout << " -------------------- INDEXING -------------------- \n";
+	indices[elIndex] = 19;
+	indices[elIndex + 1] = 0;
+	indices[elIndex + 2] = 20;
+
+	indices[elIndex + 3] = 20;
+	indices[elIndex + 4] = 0;
+	indices[elIndex + 5] = 21;
+	elIndex += 6;
+
+	for (int i = 0; i < getStage() - 1; ++i)
+	{
+		for (int j = 0; j < 20; ++j)
+		{
+			if(elIndex < faces - 9) {
+				// Split the quad into two triangles
+				indices[elIndex] = i * 20 + j;
+				indices[elIndex + 1] = i * 20 + j + 1;
+				indices[elIndex + 2] = (i + 1) * 20 + j +1;
+
+				indices[elIndex + 3] = (i + 1) * 20 + j +1;
+				indices[elIndex + 4] = i * 20 + j + 1;
+				indices[elIndex + 5] = (i + 1) * 20 + j + 2;
+
+				elIndex += 6;
+			}
+			else if (elIndex >= faces - 9)
+			{
+				indices[elIndex - 1] = (i + 1) * 20 + j - 18;
+				indices[elIndex - 2] = i * 20 + j;
+				indices[elIndex - 3] = (i + 1) * 20 + j;
+
+				indices[elIndex] = i * 20 + j;
+				indices[elIndex + 1] = i * 20 + j + 1 - 20;
+				indices[elIndex + 2] = (i + 1) * 20 + j;
+
+				indices[elIndex + 3] = (i + 1) * 20 + j;
+				indices[elIndex + 4] = i * 20 + j + 1 - 20;
+				indices[elIndex + 5] = (i + 1) * 20 + j + 2 - 20;
+
+				elIndex += 6;
+			}
+		}
+	}
+}
+
+void BuilderClass::generateIndicesCap()
+{
+	int faces = ((20 * (12 - 1) * 2) * 3) + 6;
+	indices_cap.resize(faces);
+
+	int CAPIndex = 0;
+	std::cout << " -------------------- INDEXING CAP -------------------- \n";
+	indices_cap[CAPIndex] = 19;
+	indices_cap[CAPIndex + 1] = 0;
+	indices_cap[CAPIndex + 2] = 20;
+
+	indices_cap[CAPIndex + 3] = 20;
+	indices_cap[CAPIndex + 4] = 0;
+	indices_cap[CAPIndex + 5] = 21;
+	CAPIndex += 6;
+
+	for (int i = 0; i < 12 - 1; ++i)
+	{
+		for (int j = 0; j < 20; ++j)
+		{
+			if (CAPIndex < faces - 9) {
+				// Split the quad into two triangles
+				indices_cap[CAPIndex] = i * 20 + j;
+				indices_cap[CAPIndex + 1] = i * 20 + j + 1;
+				indices_cap[CAPIndex + 2] = (i + 1) * 20 + j + 1;
+
+				indices_cap[CAPIndex + 3] = (i + 1) * 20 + j + 1;
+				indices_cap[CAPIndex + 4] = i * 20 + j + 1;
+				indices_cap[CAPIndex + 5] = (i + 1) * 20 + j + 2;
+
+				CAPIndex += 6;
+			}
+			else if (CAPIndex >= faces - 9)
+			{
+				indices_cap[CAPIndex - 1] = (i + 1) * 20 + j - 18;
+				indices_cap[CAPIndex - 2] = i * 20 + j;
+				indices_cap[CAPIndex - 3] = (i + 1) * 20 + j;
+
+				indices_cap[CAPIndex] = i * 20 + j;
+				indices_cap[CAPIndex + 1] = i * 20 + j + 1 - 20;
+				indices_cap[CAPIndex + 2] = (i + 1) * 20 + j;
+
+				indices_cap[CAPIndex + 3] = (i + 1) * 20 + j;
+				indices_cap[CAPIndex + 4] = i * 20 + j + 1 - 20;
+				indices_cap[CAPIndex + 5] = (i + 1) * 20 + j + 2 - 20;
+
+				CAPIndex += 6;
+			}
+		}
+	}
+}
+
+void BuilderClass::generateColors()
+{
+
+	for (int i = 0; i < max_stage - 1; ++i)
+	{
+		float degrade = (getRandomFloat(1, 10) / i);
+		for (int j = 0; j < 20; ++j)
+		{
+			colors_group[i][j][0] = red * i + degrade;
+			colors_group[i][j][1] = green * i + degrade;
+			colors_group[i][j][2] = blue * i + degrade;
+		}
+	}
+}
+/*
+COLORS: 0.1 * i, 0.02 * i, 0.03 * i
+COLORS: 0.1 * i, 0.02 * i, 0.03 * i
+*/
+void BuilderClass::generateColorsCap()
+{
+
+	for (int i = 0; i < 12 - 1; ++i)
+	{
+		float degrade = (getRandomFloat(1, 10) / (i * 10));
+		for (int j = 0; j < 20; ++j)
+		{
+			cap_colors[i][j][0] = red * i + degrade;
+			cap_colors[i][j][1] = green * i + degrade;
+			cap_colors[i][j][2] = blue * i + degrade;
+		}
+	}
+}
+
+void BuilderClass::setColors(float r, float g, float b)
+{
+	red = r;
+	green = g;
+	blue = b;
+}
+
+void BuilderClass::showIndices()
+{
+	for (int i = 0; i < indices.size(); i++)
+	{
+		if (i % 3 == 0)
+		{
+			std::cout << ",\n";
+		}
+
+		std::cout << indices[i]<< ", ";
 	}
 }
