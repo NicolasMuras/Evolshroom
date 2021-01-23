@@ -6,6 +6,7 @@ Keys: press 'p' to build up the shroom.
 Compiled in Visual Studio 2017
 
 Next steps:
+  - Update mesh in vao.
   - Mushrooms of random generated heights (temperature + humidity based).
   - In game menu to make a shroom with the parameters: base radius and X, Y position.
   - Show FPS info in game.
