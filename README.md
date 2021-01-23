@@ -8,7 +8,7 @@ press 'p' to grow up the shrooms.
 Compiled in Visual Studio 2017
 
 Next steps:
-  - In game menu to make a shroom with the parameters: base radius and X, Y position.
+  - In game menu to make a shroom with the parameters: base radius and X, Y position, colors.
   - Show FPS info in game.
-  - Textures
-  - Shaders
+  - Make possible have multiple shrooms in screen.
+  - Implement a hierarchy of shroom classes.
