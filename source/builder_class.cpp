@@ -4,7 +4,6 @@
 #include <random>
 #include <time.h>
 #define PI 3.14159265358979324
-using namespace std;
 
 BuilderClass::BuilderClass(float radio, float X, float Y, float r, float g, float b)
 {
@@ -106,12 +105,15 @@ void BuilderClass::setRandomVars() // Set variables that generate variations on 
 	cap_flatness = getRandomFloat(3, 7) / 100;
 	std::cout << "cap_flatness: " << cap_flatness << '\n';
 
-	std::cout << "------------------------------------------------------------- \n";
+
 }
 
 int BuilderClass::getRandomInt(int start, int end) const
 {
-	std::mt19937 rng(time(NULL) * 15000);
+	std::random_device r;
+	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
+
+	std::mt19937 rng(seed);
 	std::uniform_int_distribution<int> uniform_dist(start, end);
 
 	return uniform_dist(rng);
@@ -119,7 +121,10 @@ int BuilderClass::getRandomInt(int start, int end) const
 
 float BuilderClass::getRandomFloat(int start, int end) const
 {
-	std::mt19937 rng(time(NULL) * 15000);
+	std::random_device r;
+	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
+
+	std::mt19937 rng(seed);
 	std::uniform_real_distribution<float> uniform_dist(start, end);
 	return uniform_dist(rng);
 }
@@ -133,17 +138,15 @@ void BuilderClass::buildShroom() // Build shrooms main function
 		{
 			buildCapCircles(circle_stage);
 		}
-		
+		generateColors();
+		generateColorsCap();
 	}
 	if (getStage() < max_stage)
 	{
 		buildTrunk();
 		setStage(getStage() + 1);
 		generateIndices();
-		generateColors();
-		generateColorsCap();
 	}
-	
 }
 
 void BuilderClass::buildTrunk() // Implement random generated vars to build the shroom.
@@ -362,7 +365,6 @@ void BuilderClass::generateIndices()
 	indices.resize(faces);
 
 	int elIndex = 0;
-	std::cout << " -------------------- INDEXING -------------------- \n";
 	indices[elIndex] = 19;
 	indices[elIndex + 1] = 0;
 	indices[elIndex + 2] = 20;
@@ -414,7 +416,6 @@ void BuilderClass::generateIndicesCap()
 	indices_cap.resize(faces);
 
 	int CAPIndex = 0;
-	std::cout << " -------------------- INDEXING CAP -------------------- \n";
 	indices_cap[CAPIndex] = 19;
 	indices_cap[CAPIndex + 1] = 0;
 	indices_cap[CAPIndex + 2] = 20;
@@ -468,14 +469,13 @@ void BuilderClass::generateColors()
 		float degrade = (getRandomFloat(1, 10) / i);
 		for (int j = 0; j < 20; ++j)
 		{
-			colors_group[i][j][0] = red * i + degrade;
-			colors_group[i][j][1] = green * i + degrade;
-			colors_group[i][j][2] = blue * i + degrade;
+			colors_group[i][j][0] = red * (i * 2);
+			colors_group[i][j][1] = green * (i * 2);
+			colors_group[i][j][2] = blue * (i * 2);
 		}
 	}
 }
 /*
-COLORS: 0.1 * i, 0.02 * i, 0.03 * i
 COLORS: 0.1 * i, 0.02 * i, 0.03 * i
 */
 void BuilderClass::generateColorsCap()
@@ -486,9 +486,9 @@ void BuilderClass::generateColorsCap()
 		float degrade = (getRandomFloat(1, 10) / (i * 10));
 		for (int j = 0; j < 20; ++j)
 		{
-			cap_colors[i][j][0] = red * i + degrade;
-			cap_colors[i][j][1] = green * i + degrade;
-			cap_colors[i][j][2] = blue * i + degrade;
+			cap_colors[i][j][0] = red * (i * 3);
+			cap_colors[i][j][1] = green * (i * 3);
+			cap_colors[i][j][2] = blue * (i * 3);
 		}
 	}
 }
@@ -498,6 +498,10 @@ void BuilderClass::setColors(float r, float g, float b)
 	red = r;
 	green = g;
 	blue = b;
+	std::cout << "red: " << red << '\n';
+	std::cout << "green: " << green << '\n';
+	std::cout << "blue: " << blue << '\n';
+	std::cout << "------------------------------------------------------------- \n";
 }
 
 void BuilderClass::showIndices()
