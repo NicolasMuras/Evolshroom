@@ -8,6 +8,5 @@ press 'p' to grow up the shrooms.
 Compiled in Visual Studio 2017
 
 Next steps:
-  - Pop up menu at start to select specie and strain.
-  - Make possible to select a shroom and see his info.
-  - Implement a hierarchy of shroom classes.
+  - Show the keys in the hud.
+  - Implement numbers (1, 2, 3, 4) to select different species (and strains).
