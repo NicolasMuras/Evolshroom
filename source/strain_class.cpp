@@ -1,155 +1,155 @@
 #include <iostream>
 #include <stdexcept>
-using namespace std;
-#include "fungi_class.h"
+
 #include "strain_class.h"
 
-Strain::Strain(string strainname, string genre, string name, string location, string hymenium, string cap, string capcolor, string trunkcolor, string sporescolor, string gills)
-    : Fungi(genre, name, location, hymenium, cap, capcolor, trunkcolor, sporescolor, gills)
+Strain::Strain(int id)
+    : Fungi(id)
 {
-    setStrainName(strainname);
+	selectStrain(id);
 }
 
-void Strain::setStrainName(string strainname) {
+void Strain::setID(int id) {
+	if (id <= 4 && id >= 1) {
+		ID = id;
+	}
+	else {
+		std::cerr << "El id\"" << id << "\" esta fuera de rango. \n" << std::endl;
+	}
+}
+
+void Strain::setStrainName(std::string strainname) {
     if (strainname.size() <= 16) {
         strain_name = strainname;
     }
     else {
         strain_name = strainname.substr(0, 25);
-        cerr << "El strain_name\"" << strainname << "\" excede la longitud maxima (16). \n" << endl;
+		std::cerr << "El strain_name\"" << strainname << "\" excede la longitud maxima (16). \n" << std::endl;
     }
 }
-
-void Strain::setColonizationMinTemp(float colonizationmintemp) {
-    if (colonizationmintemp <= 16) {
-        colonization_min_temp = colonizationmintemp;
-    }
-    else {
-        cerr << "El colonization_min_temp\"" << colonizationmintemp << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-void Strain::setColonizationMaxTemp(float colonizationmaxtemp) {
-    if (colonizationmaxtemp <= 16) {
-        colonization_max_temp = colonizationmaxtemp;
-    }
-    else {
-        cerr << "El colonization_max_temp\"" << colonizationmaxtemp << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-void Strain::setColonizationMinHumd(float colonizationminhumd) {
-    if (colonizationminhumd <= 16) {
-        colonization_min_humd = colonizationminhumd;
-    }
-    else {
-        cerr << "El colonization_min_humd\"" << colonizationminhumd << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-void Strain::setColonizationMaxHumd(float colonizationmaxhumd) {
-    if (colonizationmaxhumd <= 16) {
-        colonization_max_humd = colonizationmaxhumd;
-    }
-    else {
-        cerr << "El colonization_max_humd\"" << colonizationmaxhumd << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-void Strain::setColonizationSpeed(float colonizationspeed) {
-    if (colonizationspeed <= 16) {
-        colonization_speed = colonizationspeed;
-    }
-    else {
-        cerr << "El colonization_speed\"" << colonizationspeed << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-
 
 void Strain::setFructificationMinTemp(float fructificationmintemp) {
-    if (fructificationmintemp <= 16) {
+    if (fructificationmintemp >= 0) {
         fructification_min_temp = fructificationmintemp;
     }
     else {
-        cerr << "El fructification_min_temp\"" << fructificationmintemp << "\" excede la longitud maxima (16). \n" << endl;
+		std::cerr << "El fructification_min_temp\"" << fructificationmintemp << "\" excede la longitud maxima (16). \n" << std::endl;
     }
 }
 
 void Strain::setFructificationMaxTemp(float fructificationmaxtemp) {
-    if (fructificationmaxtemp <= 16) {
+    if (fructificationmaxtemp <= 40) {
         fructification_max_temp = fructificationmaxtemp;
     }
     else {
-        cerr << "El fructification_max_temp\"" << fructificationmaxtemp << "\" excede la longitud maxima (16). \n" << endl;
+		std::cerr << "El fructification_max_temp\"" << fructificationmaxtemp << "\" excede la longitud maxima (16). \n" << std::endl;
     }
 }
 
 void Strain::setFructificationMinHumd(float fructificationminhumd) {
-    if (fructificationminhumd <= 16) {
+    if (fructificationminhumd >= 0) {
         fructification_min_humd = fructificationminhumd;
     }
     else {
-        cerr << "El fructification_min_humd\"" << fructificationminhumd << "\" excede la longitud maxima (16). \n" << endl;
+		std::cerr << "El fructification_min_humd\"" << fructificationminhumd << "\" excede la longitud maxima (16). \n" << std::endl;
     }
 }
 
 void Strain::setFructificationMaxHumd(float fructificationmaxhumd) {
-    if (fructificationmaxhumd <= 16) {
+    if (fructificationmaxhumd <= 100) {
         fructification_max_humd = fructificationmaxhumd;
     }
     else {
-        cerr << "El fructification_max_humd\"" << fructificationmaxhumd << "\" excede la longitud maxima (16). \n" << endl;
+		std::cerr << "El fructification_max_humd\"" << fructificationmaxhumd << "\" excede la longitud maxima (16). \n" << std::endl;
     }
 }
 
 void Strain::setFructificationSpeed(float fructificationspeed) {
-    if (fructificationspeed <= 16) {
+    if (fructificationspeed <= 40) {
         fructification_speed = fructificationspeed;
     }
     else {
-        cerr << "El fructification_speed\"" << fructificationspeed << "\" excede la longitud maxima (16). \n" << endl;
+		std::cerr << "El fructification_speed\"" << fructificationspeed << "\" excede la longitud maxima (16). \n" << std::endl;
     }
 }
 
-void Strain::setPinningAbundance(float pinningabundance) {
-    if (pinningabundance <= 16) {
-        pinning_abundance = pinningabundance;
+void Strain::setColorDifference(float red, float green, float blue) {
+    if (red <= 1.0 && red >= 0.0) {
+        color_difference += red;
     }
     else {
-        cerr << "El pinning_abundance\"" << pinningabundance << "\" excede la longitud maxima (16). \n" << endl;
+        std::cerr << "Valor: \"" << red << "\" fuera de rango. \n" << std::endl;
     }
-}
-
-void Strain::setSporeAbundance(float sporeabundance) {
-    if (sporeabundance <= 16) {
-        spore_abundance = sporeabundance;
-    }
-    else {
-        cerr << "El spore_abundance\"" << sporeabundance << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-void Strain::setResistanceLevel(float resistancelevel) {
-    if (resistancelevel <= 16) {
-        resistance_level = resistancelevel;
-    }
-    else {
-        cerr << "El resistance_level\"" << resistancelevel << "\" excede la longitud maxima (16). \n" << endl;
-    }
-}
-
-void Strain::setColorDifference(float colordifference) {
-    if (colordifference <= 16) {
-        color_difference = colordifference;
-    }
-    else {
-        cerr << "El color_difference\"" << colordifference << "\" excede la longitud maxima (16). \n" << endl;
-    }
+	if (green <= 1.0 && green >= 0.0) {
+		color_difference += green;
+	}
+	else {
+		std::cerr << "Valor: \"" << green << "\" fuera de rango. \n" << std::endl;
+	}
+	if (blue <= 1.0 && blue >= 0.0) {
+		color_difference += blue;
+	}
+	else {
+		std::cerr << "Valor: \"" << blue << "\" fuera de rango. \n" << std::endl;
+	}
 }
 
 
+int Strain::getID() const
+{
+	return ID;
+}
 
-string Strain::getStrainName() const {
+std::string Strain::getStrainName() const {
     return strain_name;
+}
+
+void Strain::selectStrain(int id)
+{
+	switch (id) 
+	{
+	case(1):
+		setID(1);
+		setStrainName("Goliath");
+		setFructificationMinTemp(23.0);
+		setFructificationMaxTemp(27.0);
+		setFructificationMinHumd(92.0);
+		setFructificationMaxHumd(95.0);
+		setFructificationSpeed(12.0);
+		setColorDifference(0.01, 0.01, 0.02);
+		break;
+	case(2):
+		setID(2);
+		setStrainName("");
+		setFructificationMinTemp(21.0);
+		setFructificationMaxTemp(25.0);
+		setFructificationMinHumd(85.0);
+		setFructificationMaxHumd(95.0);
+		setFructificationSpeed(16.0);
+		setColorDifference(0.02, 0.01, 0.01);
+		break;
+	case(3):
+		setID(3);
+		setStrainName("");
+		setFructificationMinTemp(23.8);
+		setFructificationMaxTemp(29.4);
+		setFructificationMinHumd(85.0);
+		setFructificationMaxHumd(95.0);
+		setFructificationSpeed(10.0);
+		setColorDifference(0.01, 0.01, 0.00);
+		break;
+	case(4):
+		setID(4);
+		setStrainName("");
+		setFructificationMinTemp(27.0);
+		setFructificationMaxTemp(32.0);
+		setFructificationMinHumd(95.0);
+		setFructificationMaxHumd(100.0);
+		setFructificationSpeed(10.0);
+		setColorDifference(0.00, 0.01, 0.01);
+		break;
+	default:
+		std::cerr << "[!] INVALID SHROOM ID: (1 - 4)\n";
+		break;
+	}
 }
