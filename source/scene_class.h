@@ -1,6 +1,6 @@
 #ifndef SCENE_CLASS_H
 #define SCENE_CLASS_H
-
+#include "strain_class.h"
 #include "builder_class.h"
 #include <vector>
 
@@ -13,10 +13,14 @@ class Scene
 public:
 	Scene(float, float);
 
-	void newMushroom(float, float, float, float, float, float);
-	
+	void newMushroom(Strain id);
+
 	// SET
 	void setArea(float, float);
+
+	// GET
+	float getArea_x();
+	float getArea_y();
 
 	// VARS
 	std::vector<BuilderClass> Mushrooms_ID;
