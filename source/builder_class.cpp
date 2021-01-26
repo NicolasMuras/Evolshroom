@@ -3,111 +3,42 @@
 #include <stdexcept>
 #include <random>
 #include <time.h>
+
 #define PI 3.14159265358979324
 
-BuilderClass::BuilderClass(float radio, float X, float Y, float r, float g, float b)
+BuilderClass::BuilderClass(Strain id)
 {
-	setLocation(radio, X, Y);
-	setRandomVars();
-	generateIndicesCap();
-	setColors(r, g, b);
-	buildShroom();
-	buildShroom();
+	buildStrain(id);
 }
 
+// SET METHODS
 void BuilderClass::setStage(int value)
 {
 	stage = value;
 }
-
-int BuilderClass::getStage() const {
-	return stage;
-}
-
-void BuilderClass::setLocation(float radio, float x, float y) 
+void BuilderClass::setLocation(float radio, float x, float y)
 {
 	X_Loc = x;
 	Y_Loc = y;
 	Radio_Loc = radio;
 }
-
-std::vector<unsigned int> BuilderClass::getIndices()
+void BuilderClass::setTrunkColors(float r, float g, float b)
 {
-	return indices;
+	red_trunk = r;
+	green_trunk = g;
+	blue_trunk = b;
 }
-void BuilderClass::showMushroom() const  // Draw the mushroom in the window
+void BuilderClass::setCapColors(float r, float g, float b)
 {
-	for (int i = 0; i <= getStage(); ++i)
-	{
-		glBegin(GL_LINE_LOOP);
-		glColor3f(0.1 * getStage(), 0.0, 0.0);
-		for (int j = 0; j < 20; ++j)
-		{
-			glVertex3f(circle_group[i][j][0], circle_group[i][j][1], circle_group[i][j][2]);
-		}
-		glEnd();
-		glFlush();
-	}
-
-	for (int k = 0; k < 12; ++k)
-	{
-
-		glBegin(GL_LINE_LOOP);
-		glColor3f(0.0, 0.0, 0.1 * getStage());
-		for (int j = 0; j < 20; ++j)
-		{
-			if (k > 11) {
-				continue;
-			}
-			glVertex3f(cap_group[k][j][0], cap_group[k][j][1], cap_group[k][j][2]);
-
-		}
-		glEnd();
-		glFlush();
-	}
+	red_cap = r;
+	green_cap = g;
+	blue_cap = b;
 }
 
-void BuilderClass::setRandomVars() // Set variables that generate variations on the mushroom geometry
-{
-	std::cout << "----------------------- MUSHROOM-INFO ----------------------- \n";
-
-	max_stage = getRandomInt(18, 25);
-	std::cout << "max_stage: " << max_stage << '\n';
-
-	root_curvation_end = getRandomInt(2, 9);
-	std::cout << "root_curvation_end: " << root_curvation_end << '\n';
-
-	curvation_start = getRandomInt(2, 9);
-	std::cout << "curvation_start: " << curvation_start << '\n';
-	if (curvation_start > 7)
-	{
-		curvation_end = getRandomInt((max_stage/2), max_stage);
-	}
-	else {
-		curvation_end = getRandomInt((max_stage/2) - 4, max_stage);
-	}
-	std::cout << "curvation_end: " << curvation_end << '\n';
-
-	curvation_direction = getRandomInt(0, 1);
-	std::cout << "curvation_direction: " << curvation_direction << '\n';
-
-	trunk_curvation_start = curvation_start;
-	std::cout << "trunk_curvation_start: " << trunk_curvation_start << '\n';
-	trunk_curvation_end = curvation_end;
-	std::cout << "trunk_curvation_end: " << trunk_curvation_end << '\n';
-
-	curvature_size = getRandomFloat(1, 2);
-	std::cout << "curvature_size: " << curvature_size << '\n';
-
-	min_trunk_width = getRandomFloat(3, 8);
-	std::cout << "min_trunk_width: " << min_trunk_width << '\n';
-
-	cap_flatness = getRandomFloat(3, 7) / 100;
-	std::cout << "cap_flatness: " << cap_flatness << '\n';
-
-
+// GET METHODS
+int BuilderClass::getStage() const {
+	return stage;
 }
-
 int BuilderClass::getRandomInt(int start, int end) const
 {
 	std::random_device r;
@@ -118,8 +49,7 @@ int BuilderClass::getRandomInt(int start, int end) const
 
 	return uniform_dist(rng);
 }
-
-float BuilderClass::getRandomFloat(int start, int end) const
+float BuilderClass::getRandomFloat(float start, float end) const
 {
 	std::random_device r;
 	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
@@ -127,6 +57,115 @@ float BuilderClass::getRandomFloat(int start, int end) const
 	std::mt19937 rng(seed);
 	std::uniform_real_distribution<float> uniform_dist(start, end);
 	return uniform_dist(rng);
+}
+std::vector<unsigned int> BuilderClass::getIndices()
+{
+	return indices;
+}
+std::vector<unsigned int> BuilderClass::getCapIndices()
+{
+	return indices_cap;
+}
+
+// MAIN METHODS
+void BuilderClass::buildStrain(Strain id)
+{
+	int shroom_type = id.getID();
+	switch (shroom_type)
+	{
+	case(1):
+		setLocation(getRandomFloat(0.1, 0.15), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
+		max_stage = getRandomInt(18, 25);
+		root_curvation_end = getRandomInt(1, 2);
+		cap_flatness = getRandomFloat(0.5, 1) / 100;
+		curvation_start = getRandomInt(2, 9);
+		if (curvation_start > 7)
+		{
+			curvation_end = getRandomInt((max_stage / 2), max_stage);
+		}
+		else {
+			curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+		}
+		curvation_direction = getRandomInt(0, 1);
+		trunk_curvation_start = curvation_start;
+		trunk_curvation_end = curvation_end;
+		curvature_size = getRandomFloat(1, 2);
+		min_trunk_width = getRandomFloat(3, 8);
+		
+		generateIndicesCap();
+		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
+		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
+		break;
+	case(2):
+		setLocation(getRandomFloat(0.3, 0.7), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
+		max_stage = getRandomInt(18, 25);
+		root_curvation_end = getRandomInt(2, 7);
+		cap_flatness = getRandomFloat(4, 6) / 100;
+		curvation_start = getRandomInt(2, 9);
+		if (curvation_start > 7)
+		{
+			curvation_end = getRandomInt((max_stage / 2), max_stage);
+		}
+		else {
+			curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+		}
+		curvation_direction = getRandomInt(0, 1);
+		trunk_curvation_start = curvation_start;
+		trunk_curvation_end = curvation_end;
+		curvature_size = getRandomFloat(1, 2);
+		min_trunk_width = getRandomFloat(4, 8);
+		
+		generateIndicesCap();
+		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
+		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
+		break;
+	case(3):
+		setLocation(getRandomFloat(0.4, 0.7), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
+		max_stage = getRandomInt(14, 18);
+		root_curvation_end = getRandomInt(2, 3);
+		cap_flatness = getRandomFloat(4, 5) / 100;
+
+		curvation_start = max_stage;
+		curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+		curvation_direction = getRandomInt(0, 1);
+		trunk_curvation_start = curvation_start;
+		trunk_curvation_end = curvation_end;
+		curvature_size = 0.1;
+		min_trunk_width = 8;
+
+		generateIndicesCap();
+		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
+		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
+		break;
+	case(4):
+		setLocation(getRandomFloat(0.1, 0.2), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
+		max_stage = getRandomInt(18, 25);
+		root_curvation_end = getRandomInt(7, 10);
+		cap_flatness = getRandomFloat(2, 4) / 100;
+		curvation_start = getRandomInt(2, 9);
+		if (curvation_start > 7)
+		{
+			curvation_end = getRandomInt((max_stage / 2), max_stage);
+		}
+		else {
+			curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+		}
+		curvation_direction = getRandomInt(0, 1);
+		trunk_curvation_start = curvation_start;
+		trunk_curvation_end = curvation_end;
+		curvature_size = getRandomFloat(1, 2);
+		min_trunk_width = getRandomFloat(3, 8);
+		
+		generateIndicesCap();
+		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
+		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
+		break;
+	default:
+		std::cerr << "[!] INVALID SHROOM ID: (1 - 4)\n";
+		break;
+	}
+	buildShroom();
+	buildShroom();
 }
 
 void BuilderClass::buildShroom() // Build shrooms main function
@@ -234,7 +273,6 @@ void BuilderClass::buildCircle(float curved_translation_y, float curved_translat
 		if (getStage() > curvation_start && getStage() < curvation_end)
 		{
 
-			//inclination_y = (Radio) * (cos(circle_inclination));
 			inclination_z = (Radio) * (sin(circle_inclination));
 
 			if (curvation_direction == 0)
@@ -248,7 +286,6 @@ void BuilderClass::buildCircle(float curved_translation_y, float curved_translat
 		}
 		else if (getStage() > curvation_end && getStage() < max_stage)
 		{
-			//inclination_y = (Radio) * (cos(circle_inclination));
 			inclination_z = (Radio) * (sin(circle_inclination));
 			
 			if (curvation_direction == 0)
@@ -409,7 +446,6 @@ void BuilderClass::generateIndices()
 		}
 	}
 }
-
 void BuilderClass::generateIndicesCap()
 {
 	int faces = ((20 * (12 - 1) * 2) * 3) + 6;
@@ -460,7 +496,6 @@ void BuilderClass::generateIndicesCap()
 		}
 	}
 }
-
 void BuilderClass::generateColors()
 {
 
@@ -469,50 +504,75 @@ void BuilderClass::generateColors()
 		float degrade = (getRandomFloat(1, 10) / i);
 		for (int j = 0; j < 20; ++j)
 		{
-			colors_group[i][j][0] = red * (i * 2);
-			colors_group[i][j][1] = green * (i * 2);
-			colors_group[i][j][2] = blue * (i * 2);
+			colors_group[i][j][0] = red_trunk * (i * 2);
+			colors_group[i][j][1] = green_trunk * (i * 2);
+			colors_group[i][j][2] = blue_trunk * (i * 2);
 		}
 	}
 }
-/*
-COLORS: 0.1 * i, 0.02 * i, 0.03 * i
-*/
 void BuilderClass::generateColorsCap()
 {
 
 	for (int i = 0; i < 12 - 1; ++i)
 	{
-		float degrade = (getRandomFloat(1, 10) / (i * 10));
+		float degrade = getRandomFloat(1, 10);
 		for (int j = 0; j < 20; ++j)
 		{
-			cap_colors[i][j][0] = red * (i * 3);
-			cap_colors[i][j][1] = green * (i * 3);
-			cap_colors[i][j][2] = blue * (i * 3);
+			cap_colors[i][j][0] = red_cap * (i * 0.3);
+			cap_colors[i][j][1] = green_cap * (i * 0.3);
+			cap_colors[i][j][2] = blue_cap * (i * 0.3);
 		}
 	}
 }
 
-void BuilderClass::setColors(float r, float g, float b)
-{
-	red = r;
-	green = g;
-	blue = b;
-	std::cout << "red: " << red << '\n';
-	std::cout << "green: " << green << '\n';
-	std::cout << "blue: " << blue << '\n';
-	std::cout << "------------------------------------------------------------- \n";
-}
 
-void BuilderClass::showIndices()
+// Aditional methods
+void BuilderClass::showGuides() const  // Draw the mushroom in the window
 {
-	for (int i = 0; i < indices.size(); i++)
+	for (int i = 0; i <= getStage(); ++i)
 	{
-		if (i % 3 == 0)
+		glBegin(GL_LINE_LOOP);
+		glColor3f(0.1 * getStage(), 0.0, 0.0);
+		for (int j = 0; j < 20; ++j)
 		{
-			std::cout << ",\n";
+			glVertex3f(circle_group[i][j][0], circle_group[i][j][1], circle_group[i][j][2]);
 		}
+		glEnd();
+		glFlush();
+	}
 
-		std::cout << indices[i]<< ", ";
+	for (int k = 0; k < 12; ++k)
+	{
+
+		glBegin(GL_LINE_LOOP);
+		glColor3f(0.0, 0.0, 0.1 * getStage());
+		for (int j = 0; j < 20; ++j)
+		{
+			if (k > 11) {
+				continue;
+			}
+			glVertex3f(cap_group[k][j][0], cap_group[k][j][1], cap_group[k][j][2]);
+
+		}
+		glEnd();
+		glFlush();
 	}
 }
+void BuilderClass::showBuilderInfo() // Set variables that generate variations on the mushroom geometry
+{
+	std::cout << "----------------------- MUSHROOM-INFO ----------------------- \n";
+	std::cout << "max_stage: " << max_stage << '\n';
+	std::cout << "root_curvation_end: " << root_curvation_end << '\n';
+	std::cout << "curvation_start: " << curvation_start << '\n';
+	std::cout << "curvation_end: " << curvation_end << '\n';
+	std::cout << "curvation_direction: " << curvation_direction << '\n';
+	std::cout << "trunk_curvation_start: " << trunk_curvation_start << '\n';
+	std::cout << "trunk_curvation_end: " << trunk_curvation_end << '\n';
+	std::cout << "curvature_size: " << curvature_size << '\n';
+	std::cout << "min_trunk_width: " << min_trunk_width << '\n';
+	std::cout << "cap_flatness: " << cap_flatness << '\n';
+}
+
+/*
+COLORS: 0.1 * i, 0.02 * i, 0.03 * i
+*/
