@@ -5,13 +5,15 @@
 #include <vector>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <type_traits>
+#include <random>
+#include <time.h>
 
 class BuilderClass
 {
 public:
 	
 	BuilderClass(Strain id);
-	~BuilderClass();
 
 	// MAIN FUNCTIONS
 	void buildStrain(Strain);
@@ -42,7 +44,7 @@ private:
 	void x_translateCap(float, int, float);
 	void z_inclinationCap(float, int);
 
-	void generateIndices();
+	void generateIndices(std::vector<unsigned int>&, int);
 	void generateIndicesCap();
 	void generateColors();
 	void generateColorsCap();
@@ -55,8 +57,22 @@ private:
 
 	// GET
 	int getStage() const;
-	int getRandomInt(int, int) const;
-	float getRandomFloat(float, float) const;
+
+	template<class generic>
+	using uniform_distribution =
+		typename std::conditional<
+		std::is_floating_point<generic>::value,
+		std::uniform_real_distribution<generic>,
+		typename std::conditional<
+		std::is_integral<generic>::value,
+		std::uniform_int_distribution<generic>,
+		void
+		>::type
+	>::type;
+	template<class generic>
+	generic getRandomNumber(generic, generic) const;
+
+
 
 	// VARS
 	float X_Loc = 0;
