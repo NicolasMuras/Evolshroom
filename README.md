@@ -8,5 +8,4 @@ press 'p' to grow up the shrooms.
 Compiled in Visual Studio 2017
 
 Next steps:
-  - Show the keys in the hud.
-  - Implement numbers (1, 2, 3, 4) to select different species (and strains).
+  - General fixes and improvements in the code organization.
