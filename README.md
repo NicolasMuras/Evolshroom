@@ -1,5 +1,5 @@
 # Mushroom Evolve
-Game development, procedural mesh generation, object oriented programming practices.
+Game development, procedural mesh generation.
 
 Keys: 
 press '+' to build a shroom.
