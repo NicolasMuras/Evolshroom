@@ -1,8 +1,6 @@
 #include "builder_class.h"
 #include <iostream>
 #include <stdexcept>
-#include <random>
-#include <time.h>
 
 #define PI 3.14159265358979324
 
@@ -39,25 +37,18 @@ void BuilderClass::setCapColors(float r, float g, float b)
 int BuilderClass::getStage() const {
 	return stage;
 }
-int BuilderClass::getRandomInt(int start, int end) const
+
+template <class generic>
+generic BuilderClass::getRandomNumber(generic start, generic end) const
 {
 	std::random_device r;
 	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
 
 	std::mt19937 rng(seed);
-	std::uniform_int_distribution<int> uniform_dist(start, end);
-
-	return uniform_dist(rng);
+	uniform_distribution<generic> dist(start, end);
+	return dist(rng);
 }
-float BuilderClass::getRandomFloat(float start, float end) const
-{
-	std::random_device r;
-	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
 
-	std::mt19937 rng(seed);
-	std::uniform_real_distribution<float> uniform_dist(start, end);
-	return uniform_dist(rng);
-}
 std::vector<unsigned int> BuilderClass::getIndices()
 {
 	return indices;
@@ -74,89 +65,89 @@ void BuilderClass::buildStrain(Strain id)
 	switch (shroom_type)
 	{
 	case(1):
-		setLocation(getRandomFloat(0.1, 0.15), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
-		max_stage = getRandomInt(18, 25);
-		root_curvation_end = getRandomInt(1, 2);
-		cap_flatness = getRandomFloat(0.5, 1) / 100;
-		curvation_start = getRandomInt(2, 9);
+		setLocation(getRandomNumber(0.1, 0.15), getRandomNumber(-2.0, 2.0), getRandomNumber(-2.0, 2.0));
+		max_stage = getRandomNumber(18, 25);
+		root_curvation_end = getRandomNumber(1, 2);
+		cap_flatness = getRandomNumber(0.005, 0.01);
+		curvation_start = getRandomNumber(2, 9);
 		if (curvation_start > 7)
 		{
-			curvation_end = getRandomInt((max_stage / 2), max_stage);
+			curvation_end = getRandomNumber((max_stage / 2), max_stage);
 		}
 		else {
-			curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+			curvation_end = getRandomNumber((max_stage / 2) - 4, max_stage);
 		}
-		curvation_direction = getRandomInt(0, 1);
+		curvation_direction = getRandomNumber(0, 1);
 		trunk_curvation_start = curvation_start;
 		trunk_curvation_end = curvation_end;
-		curvature_size = getRandomFloat(1, 2);
-		min_trunk_width = getRandomFloat(3, 8);
+		curvature_size = getRandomNumber(1, 2);
+		min_trunk_width = getRandomNumber(3, 8);
 		
-		generateIndicesCap();
+		generateIndices(indices_cap, 12);
 		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
 		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
 		break;
 	case(2):
-		setLocation(getRandomFloat(0.3, 0.7), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
-		max_stage = getRandomInt(18, 25);
-		root_curvation_end = getRandomInt(2, 7);
-		cap_flatness = getRandomFloat(4, 6) / 100;
-		curvation_start = getRandomInt(2, 9);
+		setLocation(getRandomNumber(0.3, 0.7), getRandomNumber(-2.0, 2.0), getRandomNumber(-2.0, 2.0));
+		max_stage = getRandomNumber(18, 25);
+		root_curvation_end = getRandomNumber(2, 7);
+		cap_flatness = getRandomNumber(0.04, 0.06);
+		curvation_start = getRandomNumber(2, 9);
 		if (curvation_start > 7)
 		{
-			curvation_end = getRandomInt((max_stage / 2), max_stage);
+			curvation_end = getRandomNumber((max_stage / 2), max_stage);
 		}
 		else {
-			curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+			curvation_end = getRandomNumber((max_stage / 2) - 4, max_stage);
 		}
-		curvation_direction = getRandomInt(0, 1);
+		curvation_direction = getRandomNumber(0, 1);
 		trunk_curvation_start = curvation_start;
 		trunk_curvation_end = curvation_end;
-		curvature_size = getRandomFloat(1, 2);
-		min_trunk_width = getRandomFloat(4, 8);
+		curvature_size = getRandomNumber(1, 2);
+		min_trunk_width = getRandomNumber(4, 8);
 		
-		generateIndicesCap();
+		generateIndices(indices_cap, 12);
 		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
 		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
 		break;
 	case(3):
-		setLocation(getRandomFloat(0.4, 0.7), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
-		max_stage = getRandomInt(14, 18);
-		root_curvation_end = getRandomInt(2, 3);
-		cap_flatness = getRandomFloat(4, 5) / 100;
+		setLocation(getRandomNumber(0.4, 0.7), getRandomNumber(-2.0, 2.0), getRandomNumber(-2.0, 2.0));
+		max_stage = getRandomNumber(14, 18);
+		root_curvation_end = getRandomNumber(2, 3);
+		cap_flatness = getRandomNumber(0.04, 0.05);
 
 		curvation_start = max_stage;
-		curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
-		curvation_direction = getRandomInt(0, 1);
+		curvation_end = getRandomNumber((max_stage / 2) - 4, max_stage);
+		curvation_direction = getRandomNumber(0, 1);
 		trunk_curvation_start = curvation_start;
 		trunk_curvation_end = curvation_end;
 		curvature_size = 0.1;
 		min_trunk_width = 8;
 
-		generateIndicesCap();
+		generateIndices(indices_cap, 12);
 		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
 		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
 		break;
 	case(4):
-		setLocation(getRandomFloat(0.1, 0.2), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0));
-		max_stage = getRandomInt(18, 25);
-		root_curvation_end = getRandomInt(7, 10);
-		cap_flatness = getRandomFloat(2, 4) / 100;
-		curvation_start = getRandomInt(2, 9);
+		setLocation(getRandomNumber(0.1, 0.2), getRandomNumber(-2.0, 2.0), getRandomNumber(-2.0, 2.0));
+		max_stage = getRandomNumber(18, 25);
+		root_curvation_end = getRandomNumber(7, 10);
+		cap_flatness = getRandomNumber(0.02, 0.04);
+		curvation_start = getRandomNumber(2, 9);
 		if (curvation_start > 7)
 		{
-			curvation_end = getRandomInt((max_stage / 2), max_stage);
+			curvation_end = getRandomNumber((max_stage / 2), max_stage);
 		}
 		else {
-			curvation_end = getRandomInt((max_stage / 2) - 4, max_stage);
+			curvation_end = getRandomNumber((max_stage / 2) - 4, max_stage);
 		}
-		curvation_direction = getRandomInt(0, 1);
+		curvation_direction = getRandomNumber(0, 1);
 		trunk_curvation_start = curvation_start;
 		trunk_curvation_end = curvation_end;
-		curvature_size = getRandomFloat(1, 2);
-		min_trunk_width = getRandomFloat(3, 8);
+		curvature_size = getRandomNumber(1, 2);
+		min_trunk_width = getRandomNumber(3, 8);
 		
-		generateIndicesCap();
+		generateIndices(indices_cap, 12);
 		setCapColors(id.getCapColor(0), id.getCapColor(1), id.getCapColor(2));
 		setTrunkColors(id.getTrunkColor(0), id.getTrunkColor(1), id.getTrunkColor(2));
 		break;
@@ -184,7 +175,7 @@ void BuilderClass::buildShroom() // Build shrooms main function
 	{
 		buildTrunk();
 		setStage(getStage() + 1);
-		generateIndices();
+		generateIndices(indices, getStage());
 	}
 }
 
@@ -396,102 +387,52 @@ void BuilderClass::buildCapCircle(int &circle_stage, float Radio, float Z) // Bu
 	}
 }
 
-void BuilderClass::generateIndices()
+void BuilderClass::generateIndices(std::vector<unsigned int> &indices_pointer, int actual_stage = 12)
 {
-	int faces = ((20 * (getStage() - 1) * 2) * 3) + 6;
-	indices.resize(faces);
+	int faces = ((20 * (actual_stage - 1) * 2) * 3) + 6;
+	indices_pointer.resize(faces);
 
 	int elIndex = 0;
-	indices[elIndex] = 19;
-	indices[elIndex + 1] = 0;
-	indices[elIndex + 2] = 20;
+	indices_pointer[elIndex] = 19;
+	indices_pointer[elIndex + 1] = 0;
+	indices_pointer[elIndex + 2] = 20;
 
-	indices[elIndex + 3] = 20;
-	indices[elIndex + 4] = 0;
-	indices[elIndex + 5] = 21;
+	indices_pointer[elIndex + 3] = 20;
+	indices_pointer[elIndex + 4] = 0;
+	indices_pointer[elIndex + 5] = 21;
 	elIndex += 6;
 
-	for (int i = 0; i < getStage() - 1; ++i)
+	for (int i = 0; i < actual_stage - 1; ++i)
 	{
 		for (int j = 0; j < 20; ++j)
 		{
 			if(elIndex < faces - 9) {
 				// Split the quad into two triangles
-				indices[elIndex] = i * 20 + j;
-				indices[elIndex + 1] = i * 20 + j + 1;
-				indices[elIndex + 2] = (i + 1) * 20 + j +1;
+				indices_pointer[elIndex] = i * 20 + j;
+				indices_pointer[elIndex + 1] = i * 20 + j + 1;
+				indices_pointer[elIndex + 2] = (i + 1) * 20 + j +1;
 
-				indices[elIndex + 3] = (i + 1) * 20 + j +1;
-				indices[elIndex + 4] = i * 20 + j + 1;
-				indices[elIndex + 5] = (i + 1) * 20 + j + 2;
+				indices_pointer[elIndex + 3] = (i + 1) * 20 + j +1;
+				indices_pointer[elIndex + 4] = i * 20 + j + 1;
+				indices_pointer[elIndex + 5] = (i + 1) * 20 + j + 2;
 
 				elIndex += 6;
 			}
 			else if (elIndex >= faces - 9)
 			{
-				indices[elIndex - 1] = (i + 1) * 20 + j - 18;
-				indices[elIndex - 2] = i * 20 + j;
-				indices[elIndex - 3] = (i + 1) * 20 + j;
+				indices_pointer[elIndex - 1] = (i + 1) * 20 + j - 18;
+				indices_pointer[elIndex - 2] = i * 20 + j;
+				indices_pointer[elIndex - 3] = (i + 1) * 20 + j;
 
-				indices[elIndex] = i * 20 + j;
-				indices[elIndex + 1] = i * 20 + j + 1 - 20;
-				indices[elIndex + 2] = (i + 1) * 20 + j;
+				indices_pointer[elIndex] = i * 20 + j;
+				indices_pointer[elIndex + 1] = i * 20 + j + 1 - 20;
+				indices_pointer[elIndex + 2] = (i + 1) * 20 + j;
 
-				indices[elIndex + 3] = (i + 1) * 20 + j;
-				indices[elIndex + 4] = i * 20 + j + 1 - 20;
-				indices[elIndex + 5] = (i + 1) * 20 + j + 2 - 20;
+				indices_pointer[elIndex + 3] = (i + 1) * 20 + j;
+				indices_pointer[elIndex + 4] = i * 20 + j + 1 - 20;
+				indices_pointer[elIndex + 5] = (i + 1) * 20 + j + 2 - 20;
 
 				elIndex += 6;
-			}
-		}
-	}
-}
-void BuilderClass::generateIndicesCap()
-{
-	int faces = ((20 * (12 - 1) * 2) * 3) + 6;
-	indices_cap.resize(faces);
-
-	int CAPIndex = 0;
-	indices_cap[CAPIndex] = 19;
-	indices_cap[CAPIndex + 1] = 0;
-	indices_cap[CAPIndex + 2] = 20;
-
-	indices_cap[CAPIndex + 3] = 20;
-	indices_cap[CAPIndex + 4] = 0;
-	indices_cap[CAPIndex + 5] = 21;
-	CAPIndex += 6;
-
-	for (int i = 0; i < 12 - 1; ++i)
-	{
-		for (int j = 0; j < 20; ++j)
-		{
-			if (CAPIndex < faces - 9) {
-				// Split the quad into two triangles
-				indices_cap[CAPIndex] = i * 20 + j;
-				indices_cap[CAPIndex + 1] = i * 20 + j + 1;
-				indices_cap[CAPIndex + 2] = (i + 1) * 20 + j + 1;
-
-				indices_cap[CAPIndex + 3] = (i + 1) * 20 + j + 1;
-				indices_cap[CAPIndex + 4] = i * 20 + j + 1;
-				indices_cap[CAPIndex + 5] = (i + 1) * 20 + j + 2;
-
-				CAPIndex += 6;
-			}
-			else if (CAPIndex >= faces - 9)
-			{
-				indices_cap[CAPIndex - 1] = (i + 1) * 20 + j - 18;
-				indices_cap[CAPIndex - 2] = i * 20 + j;
-				indices_cap[CAPIndex - 3] = (i + 1) * 20 + j;
-
-				indices_cap[CAPIndex] = i * 20 + j;
-				indices_cap[CAPIndex + 1] = i * 20 + j + 1 - 20;
-				indices_cap[CAPIndex + 2] = (i + 1) * 20 + j;
-
-				indices_cap[CAPIndex + 3] = (i + 1) * 20 + j;
-				indices_cap[CAPIndex + 4] = i * 20 + j + 1 - 20;
-				indices_cap[CAPIndex + 5] = (i + 1) * 20 + j + 2 - 20;
-
-				CAPIndex += 6;
 			}
 		}
 	}
@@ -501,7 +442,6 @@ void BuilderClass::generateColors()
 
 	for (int i = 0; i < max_stage - 1; ++i)
 	{
-		float degrade = (getRandomFloat(1, 10) / i);
 		for (int j = 0; j < 20; ++j)
 		{
 			colors_group[i][j][0] = red_trunk * (i * 2);
@@ -515,7 +455,6 @@ void BuilderClass::generateColorsCap()
 
 	for (int i = 0; i < 12 - 1; ++i)
 	{
-		float degrade = getRandomFloat(1, 10);
 		for (int j = 0; j < 20; ++j)
 		{
 			cap_colors[i][j][0] = red_cap * (i * 0.3);
