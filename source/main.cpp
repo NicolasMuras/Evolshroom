@@ -5,20 +5,16 @@
 #include <time.h>
 #include "SOIL2.h"
 
-#define PI 3.14159265358979324
+// Globals.
 
 #define VERTICES 0
 #define INDICES 1
 #define SHROOM 0
 #define CAP 1
 
-#define NUMBERPRIMITIVES 3
-// Globals.
-
 static float Xvalue = 0.0, Yvalue = 0.0; // Co-ordinates of the sphere.
 static float Angle = 0.0; // Angle to rotate the sphere.
 static char guidesMode = 'a';
-static char HUDtex;
 static int width, height; // OpenGL window size.
 
 static unsigned int stripIndices[15][3000] = { 0 };
@@ -27,7 +23,8 @@ static unsigned int vao[15][2]; // Array of VAO ids.
 static unsigned int buffer[15][2]; // Array of buffer ids.
 
 Scene scene_1(1, 1);
-GLuint textures[10] = {1};
+Strain selected_strain(1);
+GLuint textures[10] = { 1 };
 
 void writeStrokeString(void *font, char *string)
 {
@@ -39,12 +36,25 @@ void writeStrokeString(void *font, char *string)
 }
 void drawText()
 {
-	glColor3f(0.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glWindowPos2i(30, 112);
-	writeStrokeString(GLUT_BITMAP_HELVETICA_18, (char *)"Psilocybe\tCubensis");
-	glColor3f(0.7f, 0.2f, 0.1f);
+
+	std::string s = selected_strain.getName();
+	int n = s.length();
+	char buffer[30];
+	memset(buffer, 0, 30);
+	strcpy_s(buffer, sizeof(s), s.c_str());
+
+	writeStrokeString(GLUT_BITMAP_HELVETICA_18, (char *)buffer);
+	glColor3f(1.0f, 0.2f, 0.1f);
 	glWindowPos2i(30, 87);
-	writeStrokeString(GLUT_BITMAP_HELVETICA_18, (char *)"B+");
+
+	s = selected_strain.getBiome();
+	n = s.length();
+	memset(buffer, 0, 30);
+	strcpy_s(buffer, sizeof(s), s.c_str());
+
+	writeStrokeString(GLUT_BITMAP_HELVETICA_18, (char *)buffer);
 }
 GLuint textureInit(const char* image_path)
 {
@@ -98,29 +108,6 @@ void drawStars(int calification)
 		glEnd();
 	}
 }
-void drawSelectionSquare(int selected_id)
-{
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[2]);
-	for (int i = 0; i < selected_id; i++)
-	{
-		if (i == selected_id - 1)
-		{
-			glBegin(GL_QUADS);
-				glColor3f(255, 255, 255);
-				glTexCoord2f(0, 1);
-				glVertex2f(370 + (i * 48), 99);
-				glTexCoord2f(0, 0);
-				glVertex2f(370 + (i * 48), 137);
-				glTexCoord2f(1, 0);
-				glVertex2f(411 + (i * 48), 137);
-				glTexCoord2f(1, 1);
-				glVertex2f(411 + (i * 48), 99);
-				glTexCoord2f(0, 1);
-			glEnd();
-		}
-	}
-}
 void drawHUD(void)
 {
 	glDisable(GL_CULL_FACE);
@@ -136,11 +123,8 @@ void drawHUD(void)
 
 	if (textures[0] == 1)  // Load textures once time
 	{
-		textures[0] = textureInit("hud/hud_old.png");
+		textures[0] = textureInit("hud/hud.png");
 		textures[1] = textureInit("hud/star.png");
-		textures[2] = textureInit("hud/selection_square.png");
-		textures[3] = textureInit("hud/colored_shroom.png");
-		textures[4] = textureInit("hud/gray_shroom.png");
 	}
 
 	glEnable(GL_TEXTURE_2D);
@@ -151,21 +135,20 @@ void drawHUD(void)
 	glAlphaFunc(GL_GREATER, 0.1);
 
 	glBegin(GL_QUADS);
-		glColor3f(255, 255, 255);
-		glTexCoord2f(0, 1);
-		glVertex2f(0, 0);
-		glTexCoord2f(0, 0);
-		glVertex2f(0, 150);
-		glTexCoord2f(1, 0);
-		glVertex2f(1000, 150);
-		glTexCoord2f(1, 1);
-		glVertex2f(1000, 0);
-		glTexCoord2f(0, 1);
-		
+	glColor3f(255, 255, 255);
+	glTexCoord2f(0, 1);
+	glVertex2f(0, 0);
+	glTexCoord2f(0, 0);
+	glVertex2f(0, 150);
+	glTexCoord2f(1, 0);
+	glVertex2f(1000, 150);
+	glTexCoord2f(1, 1);
+	glVertex2f(1000, 0);
+	glTexCoord2f(0, 1);
+
 	glEnd();
 
-	drawStars(5);
-	drawSelectionSquare(1);
+	drawStars(selected_strain.getID());
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
@@ -173,21 +156,21 @@ void drawHUD(void)
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 }
-void showGuides()
+void guideMode()
 {
 	if (guidesMode == 'a')
 	{
 		// Shows the guides
 		for (int i = 0; i < scene_1.Mushrooms_ID.size(); i++)
 		{
-			scene_1.Mushrooms_ID[i].showMushroom();
+			scene_1.Mushrooms_ID[i].showGuides();
 		}
 	}
 
 }
 void fillIndices(std::vector<unsigned int> index, bool mode, int array_id)
 {
-	
+
 	if (mode == 1)
 	{
 		for (int i = 0; i < index.size(); i++)
@@ -204,16 +187,6 @@ void fillIndices(std::vector<unsigned int> index, bool mode, int array_id)
 	}
 
 }
-float getRandomFloat(float start, float end)
-{
-	std::random_device r;
-	std::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
-
-	std::mt19937 rng(seed);
-	std::uniform_real_distribution<float> uniform_dist(start, end);
-	return uniform_dist(rng);
-
-}
 void updateShrooms()
 {
 	for (int i = 0; i < scene_1.Mushrooms_ID.size(); i++)
@@ -225,7 +198,7 @@ void updateShrooms()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(scene_1.Mushrooms_ID[i].circle_group) + sizeof(scene_1.Mushrooms_ID[i].colors_group), &scene_1.Mushrooms_ID[i].circle_group[0], GL_DYNAMIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(scene_1.Mushrooms_ID[i].circle_group), scene_1.Mushrooms_ID[i].circle_group);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[i][INDICES]);
-		fillIndices(scene_1.Mushrooms_ID[i].indices, 1, i);
+		fillIndices(scene_1.Mushrooms_ID[i].getIndices(), 1, i);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(stripIndices[i]), stripIndices[i], GL_DYNAMIC_DRAW);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
@@ -240,13 +213,13 @@ void updateShrooms()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(scene_1.Mushrooms_ID[i].cap_group) + sizeof(scene_1.Mushrooms_ID[i].cap_colors), &scene_1.Mushrooms_ID[i].cap_group[0], GL_DYNAMIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(scene_1.Mushrooms_ID[i].cap_group), scene_1.Mushrooms_ID[i].cap_group);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[i][INDICES]);
-		fillIndices(scene_1.Mushrooms_ID[i].indices_cap, 0, i);
+		fillIndices(scene_1.Mushrooms_ID[i].getCapIndices(), 0, i);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(stripIndicesCap[i]), stripIndicesCap[i], GL_DYNAMIC_DRAW);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 
 		glDrawElements(GL_TRIANGLES, 1500, GL_UNSIGNED_INT, 0);
-		
+
 	}
 }
 
@@ -257,13 +230,13 @@ void drawScene(void)
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glLoadIdentity();
-	
+
 	glTranslatef(Xvalue, Yvalue, -5.0);
 	glRotatef(Angle, 1.0, 1.0, 1.0);
 
-	
+
 	updateShrooms();
-	showGuides();
+	guideMode();
 	drawHUD();
 	drawText();
 
@@ -296,7 +269,7 @@ void setup(int i)
 
 	// Bind and fill indices buffer.
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[i][INDICES]);
-	fillIndices(scene_1.Mushrooms_ID[i].indices, 1, i);
+	fillIndices(scene_1.Mushrooms_ID[i].getIndices(), 1, i);
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(stripIndices[i]), stripIndices[i], GL_DYNAMIC_DRAW);
 
@@ -323,7 +296,7 @@ void setup(int i)
 
 	// Bind and fill indices buffer.
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[i][INDICES]);
-	fillIndices(scene_1.Mushrooms_ID[i].indices_cap, 0, i);
+	fillIndices(scene_1.Mushrooms_ID[i].getCapIndices(), 0, i);
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(stripIndicesCap[i]), stripIndicesCap[i], GL_DYNAMIC_DRAW);
 
@@ -351,23 +324,16 @@ void keyInput(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case '+':
-		//scene_1.newMushroom(getRandomFloat(0.2, 0.7), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0), getRandomFloat(0.005, 0.03), getRandomFloat(0.005, 0.03), getRandomFloat(0.005, 0.03));
-		scene_1.newMushroom(getRandomFloat(0.2, 0.7), getRandomFloat(-2.0, 2.0), getRandomFloat(-2.0, 2.0), 0.00526354, 0.00999298, 0.0241513);
-		/*
-		red: 0.00526354
-		green: 0.00999298
-		blue: 0.0241513
-		*/
+		scene_1.newMushroom(selected_strain);
 		setup(scene_1.Mushrooms_ID.size() - 1);
 		glutPostRedisplay();
 		break;
 	case 's':
-
 		if (guidesMode == 'a')
 		{
 			guidesMode = 'b';
 		}
-		else if(guidesMode == 'b')
+		else if (guidesMode == 'b')
 		{
 			guidesMode = 'a';
 		}
@@ -378,8 +344,27 @@ void keyInput(unsigned char key, int x, int y)
 		{
 			scene_1.Mushrooms_ID[i].buildShroom();
 		}
-
 		glutPostRedisplay();
+		break;
+	case '1':
+		selected_strain.selectStrain(1);
+		selected_strain.selectFungi(1);
+		selected_strain.selectSpecie(1);
+		break;
+	case '2':
+		selected_strain.selectStrain(2);
+		selected_strain.selectFungi(2);
+		selected_strain.selectSpecie(2);
+		break;
+	case '3':
+		selected_strain.selectStrain(3);
+		selected_strain.selectFungi(3);
+		selected_strain.selectSpecie(3);
+		break;
+	case '4':
+		selected_strain.selectStrain(4);
+		selected_strain.selectFungi(4);
+		selected_strain.selectSpecie(4);
 		break;
 	case 'r':
 		Xvalue = Yvalue = Angle = 0.0;
@@ -407,25 +392,14 @@ void specialKeyInput(int key, int x, int y)
 	glutPostRedisplay();
 }
 
-// Routine to output interaction instructions to the C++ window.
-void printInteraction(void)
-{
-	std::cout << "Interaction:" << std::endl;
-	std::cout << "Press the arrow keys to move around the scene." << std::endl
-		<< "Press the space bar to rotate the scene." << std::endl
-		<< "Press r to reset." << std::endl;
-}
-
 // Main routine.
 int main(int argc, char **argv)
 {
 	Angle += 240.0;
-	printInteraction();
 	glutInit(&argc, argv);
 
 	glutInitContextVersion(4, 3);
 	glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
-
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(1000, 1000);
 	glutInitWindowPosition(100, 100);
@@ -433,15 +407,10 @@ int main(int argc, char **argv)
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(resize);
 	glutKeyboardFunc(keyInput);
-
 	// Register the callback function for non-ASCII key entry.
 	glutSpecialFunc(specialKeyInput);
-
-
-
 	glewExperimental = GL_TRUE;
 	glewInit();
 	glClearColor(0.5, 0.5, 0.5, 0.0);
 	glutMainLoop();
 }
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
