@@ -6,32 +6,33 @@
 class Fungi : public Specie
 {
 public:
-    explicit Fungi(std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string);
+    explicit Fungi(int id);
 
     // SET
 
     void setHymeniumType(std::string);
     void setCapType(std::string);
-    void setCapColor(std::string);
-    void setTrunkColor(std::string);
-    void setSporesColor(std::string);
-    void setGillsType(std::string);
+    void setCapColor(float, float, float);
+    void setTrunkColor(float, float, float);
+    void setSporesColor(float, float, float);
 
     // GET
 
     std::string getHymeniumType()const;
     std::string getCapType()const;
-    std::string getCapColor()const;
-    std::string getTrunkColor()const;
-    std::string getSporesColor()const;
-    std::string getGillsType()const;
+	float getCapColor(int id)const;
+	float getTrunkColor(int id)const;
+	float getSporesColor(int id)const;
 
+	void selectFungi(int);
+
+	// CONST VARS
+	
 private:
     std::string hymenium_type;
     std::string cap_type;
-    std::string cap_color;
-    std::string trunk_color;
-    std::string spores_color;
-    std::string gills_type;
+	float cap_color[3];
+	float trunk_color[3];
+	float spores_color[3];
 };
 #endif // FUNGI_H
