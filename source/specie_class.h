@@ -5,27 +5,28 @@
 class Specie
 {
 public:
-    explicit Specie(std::string, std::string, std::string);
+    explicit Specie(int id);
 
     // SET
 
-    void setGenre(std::string);
+    void setFamily(std::string);
     void setName(std::string);
-    void setLocation(std::string);
+    void setBiome(std::string);
 
     // GET
 
-    std::string getGenre()const;
-    std::string getName()const;
-    std::string getLocation()const;
+    std::string getFamily()const;
+	std::string getName()const;
+    std::string getBiome()const;
 
     // FUNCTIONS
 
+	void selectSpecie(int);
     void showInfo()const;
 
 private:
-    std::string genre;
+    std::string family;
     std::string name;
-    std::string location;
+    std::string biome;
 };
 #endif // SPECIE_H
