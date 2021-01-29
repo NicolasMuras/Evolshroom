@@ -23,7 +23,7 @@ El objetivo del proyecto era probar las fortalezas de la generacion procedural p
 <li><strong>C++</strong>: El lenguaje utilizado para la elaboracion del codigo.</li>
 <li><strong>OpenGL</strong>: API utilizada para visualizar nuestros objetos en tiempo real.</li>
 <li><strong>SOIL2</strong>: Libreria utilizada para cargar las texturas en el HUD.</li>
-<li><strong>GLEW</strong>: GLEW proporciona mecanismos eficientes en tiempo de ejecución para determinar qué extensiones de OpenGL son compatibles con la plataforma de destino.</li>
+<li><strong>GLEW</strong>: Proporciona mecanismos eficientes en tiempo de ejecución para determinar qué extensiones de OpenGL son compatibles con la plataforma de destino.</li>
 <li><strong>GLUT</strong>: Utilizamos GLUT para crear nuestras ventanas en el contexto de OpenGL, como asi tambien para propocionar lectura de mouse y teclado.</li>
 </ul>
 
