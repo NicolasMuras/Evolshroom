@@ -38,9 +38,9 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
    </td>
   </tr>
   <tr>
-   <td><strong>URI</strong>
+   <td><strong>1, 2, 3, 4</strong>
    </td>
-   <td><a href="http://localhost:5000/api/v1/states/" rel="nofollow">http://localhost:5000/api/v1/states/</a>
+   <td><a>Selección de especie / strain.</a>
    </td>
   </tr>
   <tr>
