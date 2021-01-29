@@ -32,9 +32,9 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
 
 <table>
   <tbody><tr>
-   <td><strong>Atributo</strong>
+   <td><strong>Tecla</strong>
    </td>
-   <td><strong>Valor</strong>
+   <td><strong>Función</strong>
    </td>
   </tr>
   <tr>
