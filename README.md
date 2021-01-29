@@ -1,4 +1,7 @@
 # Mushroom Evolve
+Nicolas Muras - nicolasmuras@gmail.com -Enero 2021
+
+<h2></h2>
 Game development, procedural mesh generation.
 
 Keys: 
