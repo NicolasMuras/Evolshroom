@@ -62,21 +62,21 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
    </td>
   </tr>
   <tr>
-   <td><strong>Request Body</strong>
+   <td><strong>'r'</strong>
    </td>
-   <td>-
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Response Body</strong>
-   </td>
-   <td>JSON con todos los estados
+   <td>Resetea la vista a la inicial.
    </td>
   </tr>
   <tr>
-   <td><strong>Response Status</strong>
+   <td><strong>'Barra espaciadora'</strong>
    </td>
-   <td>200
+   <td>Gira la camara en un angulo ya determinado.
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Flechas de movimiento</strong>
+   </td>
+   <td>Nos permite movernos por la escena.
    </td>
   </tr>
 </tbody></table>
