@@ -24,9 +24,7 @@ El objetivo del proyecto era probar las fortalezas de la generacion procedural p
 <li><strong>OpenGL</strong>: API utilizada para visualizar nuestros objetos en tiempo real.</li>
 <li><strong>SOIL2</strong>: Libreria utilizada para cargar las texturas en el HUD.</li>
 <li><strong>GLEW</strong>: GLEW proporciona mecanismos eficientes en tiempo de ejecución para determinar qué extensiones de OpenGL son compatibles con la plataforma de destino.</li>
-<li><strong>Ecosistema Docker (docker, Dockerfile, Docker-Compose)</strong>: a partir del Dockerfile en el raíz del proyecto se puede compilar la imagen que corre la REST API hecha en Flask, con todas sus dependencias y código fuente dentro. Con Docker-Compose se puede ejecutar la aplicación con un único comando, creando además un servidor de base de datos PostgreSQL.</li>
-<li><strong>Unittest</strong>: Framework provisto en la librería standard de Python para realizar testing unitario del código.</li>
-<li><strong>Pytest</strong>: Framework para realizar además de testing de software, reporte de coverage (cobertura de código) en distintos formatos, entre ellos HTML.</li>
+<li><strong>GLUT</strong>: Utilizamos GLUT para crear nuestras ventanas en el contexto de OpenGL, como asi tambien para propocionar lectura de mouse y teclado.</li>
 </ul>
 
 Keys: 
