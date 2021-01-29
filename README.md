@@ -44,21 +44,21 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
    </td>
   </tr>
   <tr>
-   <td><strong>METHOD</strong>
+   <td><strong>'+'</strong>
    </td>
-   <td>GET
-   </td>
-  </tr>
-  <tr>
-   <td><strong>Details</strong>
-   </td>
-   <td>Obtener todos los estados en la DB
+   <td>Crea un nuevo objeto perteneciente a la especie seleccionada.
    </td>
   </tr>
   <tr>
-   <td><strong>Request Headers</strong>
+   <td><strong>'p'</strong>
    </td>
-   <td>-
+   <td>Provoca que los objetos crezcan.
+   </td>
+  </tr>
+  <tr>
+   <td><strong>'s'</strong>
+   </td>
+   <td>Muestra los circulos que se utilizan como guias para proporcionar coordenadas a los indíces.
    </td>
   </tr>
   <tr>
