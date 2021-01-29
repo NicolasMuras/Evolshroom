@@ -81,8 +81,8 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
   </tr>
 </tbody></table>
 
-Compiled in Visual Studio 2017, x86 bits.
+Compilado en Visual Studio 2017, x86 bits.
 
-Proyect finished in 13 Days, i really enjoyed it.
+Proyecto finalizado en 13 dias.
 
 
