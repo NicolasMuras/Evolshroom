@@ -27,6 +27,8 @@ El objetivo del proyecto era probar las fortalezas de la generacion procedural p
 <li><strong>GLUT</strong>: Utilizamos GLUT para crear nuestras ventanas en el contexto de OpenGL, como asi tambien para propocionar lectura de mouse y teclado.</li>
 </ul>
 
+Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma de la programación orientada a objetos por un lado y luego pase a trabajar con el core del programa: la clase 'builder' se encarga de construir y devolver el estado del objeto para que asi pueda ser renderizado en tiempo real, utilizando numeros aleatorios y reglas (muy importante) logramos establecer patrones que se asemejan al objeto que queremos crear.
+
 Keys: 
 press '+' to build a shroom.
 press 'p' to grow up the shrooms.
