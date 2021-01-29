@@ -6,7 +6,7 @@ Nicolas Muras - nicolasmuras@gmail.com -Enero 2021
 </h2>
 <ul>
   <li><a href="#introduccion-al-proyecto">Introducción al proyecto</a></li>
-  <li><a href="#introduccion-al-proyecto">Introducción al proyecto</a></li>
+  <li><a href="#implementaci%C3%B3n-del-proyecto">Implementacion del proyecto</a></li>
   <li><a href="#introduccion-al-proyecto">Introducción al proyecto</a></li>
   <li><a href="#introduccion-al-proyecto">Introducción al proyecto</a></li>
 </ul>
