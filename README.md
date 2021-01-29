@@ -68,7 +68,7 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
    </td>
   </tr>
   <tr>
-   <td><strong>'Barra espaciadora'</strong>
+   <td><strong>Barra espaciadora</strong>
    </td>
    <td>Gira la camara en un angulo ya determinado.
    </td>
@@ -80,10 +80,6 @@ Empece por trabajar el diseño y jerarquias de las clases siguiendo el paradigma
    </td>
   </tr>
 </tbody></table>
-
-Keys: 
-press '+' to build a shroom.
-press 'p' to grow up the shrooms.
 
 Compiled in Visual Studio 2017, x86 bits.
 
